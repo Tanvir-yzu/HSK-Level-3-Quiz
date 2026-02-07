@@ -655,134 +655,252 @@ export default function App() {
     const selectedLevel = hskLevels.find(l => l.level === quizSettings.level);
     
     return (
-      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 py-8">
-        <div className="container mx-auto px-4 max-w-2xl">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 py-8">
+        <div className="container mx-auto px-4 max-w-3xl">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-white rounded-3xl shadow-xl p-8"
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl shadow-blue-500/10 border border-white/20 overflow-hidden"
           >
-            <div className="flex items-center justify-between mb-8">
-              <Button variant="ghost" onClick={() => setAppState('select-level')}>
-                <ChevronRight className="w-5 h-5 mr-2 rotate-180" />
-                Back
-              </Button>
-              <div className="text-center">
-                <h2 className="text-2xl font-bold text-gray-800">Quiz Settings</h2>
-                <Badge className={cn(
-                  "mt-1 bg-gradient-to-r",
-                  selectedLevel?.color
-                )}>
-                  {selectedLevel?.name}
-                </Badge>
-              </div>
-              <div className="w-20" />
-            </div>
-
-            {/* Quiz Mode */}
-            <div className="mb-8">
-              <label className="block text-sm font-medium text-gray-700 mb-4">Quiz Mode</label>
-              <div className="grid gap-3">
-                {quizModes.map((mode) => (
-                  <button
-                    key={mode.id}
-                    onClick={() => setQuizSettings({ ...quizSettings, mode: mode.id })}
-                    className={cn(
-                      "flex items-center p-4 rounded-xl border-2 transition-all text-left",
-                      quizSettings.mode === mode.id
-                        ? "border-indigo-500 bg-indigo-50"
-                        : "border-gray-200 hover:border-gray-300"
-                    )}
-                  >
-                    <mode.icon className={cn(
-                      "w-6 h-6 mr-4",
-                      quizSettings.mode === mode.id ? "text-indigo-600" : "text-gray-400"
-                    )} />
-                    <div>
-                      <p className={cn(
-                        "font-semibold",
-                        quizSettings.mode === mode.id ? "text-indigo-900" : "text-gray-700"
-                      )}>{mode.name}</p>
-                      <p className="text-sm text-gray-500">{mode.description}</p>
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Question Count */}
-            <div className="mb-8">
-              <label className="block text-sm font-medium text-gray-700 mb-4">Number of Questions</label>
-              <div className="flex flex-wrap gap-3">
-                {questionCountOptions.map((count) => (
-                  <button
-                    key={count}
-                    onClick={() => setQuizSettings({ ...quizSettings, questionCount: count })}
-                    className={cn(
-                      "px-6 py-3 rounded-xl border-2 font-semibold transition-all",
-                      quizSettings.questionCount === count
-                        ? "border-indigo-500 bg-indigo-50 text-indigo-700"
-                        : "border-gray-200 text-gray-600 hover:border-gray-300"
-                    )}
-                  >
-                    {count}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Time Limit */}
-            <div className="mb-8">
-              <label className="block text-sm font-medium text-gray-700 mb-4">Time Limit (Optional)</label>
-              <div className="flex flex-wrap gap-3">
-                <button
-                  onClick={() => setQuizSettings({ ...quizSettings, timeLimit: null })}
-                  className={cn(
-                    "px-6 py-3 rounded-xl border-2 font-semibold transition-all",
-                    quizSettings.timeLimit === null
-                      ? "border-indigo-500 bg-indigo-50 text-indigo-700"
-                      : "border-gray-200 text-gray-600 hover:border-gray-300"
-                  )}
+            {/* Header */}
+            <div className="bg-gradient-to-r from-blue-500 to-indigo-600 p-8 text-white relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16" />
+              <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full translate-y-12 -translate-x-12" />
+              
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+              >
+                <Button 
+                  variant="ghost" 
+                  onClick={() => setAppState('select-level')}
+                  className="absolute top-6 left-6 text-white hover:bg-white/20 rounded-full p-3"
                 >
-                  No Limit
-                </button>
-                {[5, 10, 15].map((minutes) => (
-                  <button
-                    key={minutes}
-                    onClick={() => setQuizSettings({ ...quizSettings, timeLimit: minutes * 60 })}
-                    className={cn(
-                      "px-6 py-3 rounded-xl border-2 font-semibold transition-all",
-                      quizSettings.timeLimit === minutes * 60
-                        ? "border-indigo-500 bg-indigo-50 text-indigo-700"
-                        : "border-gray-200 text-gray-600 hover:border-gray-300"
-                    )}
-                  >
-                    {minutes} min
-                  </button>
-                ))}
+                  <ChevronRight className="w-5 h-5 rotate-180" />
+                </Button>
+                
+                <div className="text-center">
+                  <h1 className="text-3xl font-bold mb-2">Quiz Configuration</h1>
+                  <p className="text-blue-100">Customize your learning experience</p>
+                </div>
+                
+                <div className="text-center mt-6">
+                  <Badge className={cn(
+                    "bg-white/20 text-white border-white/30 text-lg px-6 py-2"
+                  )}>
+                    {selectedLevel?.name}
+                  </Badge>
+                </div>
+              </motion.div>
+            </div>
+
+            <div className="p-8 md:p-12">
+              <div className="space-y-10">
+                {/* Quiz Mode Section */}
+                <motion.section
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.3 }}
+                >
+                  <h2 className="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-3">
+                    <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                      <Brain className="w-5 h-5 text-blue-600" />
+                    </div>
+                    Quiz Mode
+                  </h2>
+                  <div className="grid md:grid-cols-2 gap-4">
+                    {quizModes.map((mode, index) => (
+                      <motion.button
+                        key={mode.id}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.4, delay: 0.4 + index * 0.1 }}
+                        onClick={() => setQuizSettings({ ...quizSettings, mode: mode.id })}
+                        className={cn(
+                          "group relative p-6 rounded-2xl border-2 text-left transition-all duration-300",
+                          quizSettings.mode === mode.id
+                            ? "border-blue-500 bg-blue-50 shadow-lg shadow-blue-500/10"
+                            : "border-slate-200 bg-white hover:border-slate-300 hover:shadow-md"
+                        )}
+                      >
+                        {quizSettings.mode === mode.id && (
+                          <motion.div
+                            layoutId="activeModeIndicator"
+                            className="absolute top-4 right-4 w-3 h-3 bg-blue-500 rounded-full"
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                          />
+                        )}
+                        
+                        <div className="flex items-start gap-4">
+                          <div className={cn(
+                            "w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors",
+                            quizSettings.mode === mode.id
+                              ? "bg-blue-500 text-white"
+                              : "bg-slate-100 text-slate-500 group-hover:bg-slate-200"
+                          )}>
+                            <mode.icon className="w-6 h-6" />
+                          </div>
+                          <div className="flex-1">
+                            <h3 className={cn(
+                              "font-semibold text-lg mb-1",
+                              quizSettings.mode === mode.id ? "text-blue-900" : "text-slate-800"
+                            )}>
+                              {mode.name}
+                            </h3>
+                            <p className={cn(
+                              "text-sm leading-relaxed",
+                              quizSettings.mode === mode.id ? "text-blue-700" : "text-slate-500"
+                            )}>
+                              {mode.description}
+                            </p>
+                          </div>
+                        </div>
+                      </motion.button>
+                    ))}
+                  </div>
+                </motion.section>
+
+                {/* Question Count Section */}
+                <motion.section
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.5 }}
+                >
+                  <h2 className="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-3">
+                    <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                      <Target className="w-5 h-5 text-green-600" />
+                    </div>
+                    Number of Questions
+                  </h2>
+                  <div className="grid grid-cols-3 sm:grid-cols-5 gap-3">
+                    {questionCountOptions.map((count, index) => (
+                      <motion.button
+                        key={count}
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.3, delay: 0.6 + index * 0.05 }}
+                        onClick={() => setQuizSettings({ ...quizSettings, questionCount: count })}
+                        className={cn(
+                          "relative px-4 py-4 rounded-xl border-2 font-semibold transition-all duration-300",
+                          "focus:outline-none focus:ring-4 focus:ring-blue-500/20",
+                          quizSettings.questionCount === count
+                            ? "border-blue-500 bg-blue-500 text-white shadow-lg shadow-blue-500/25"
+                            : "border-slate-200 bg-white text-slate-700 hover:border-blue-400 hover:bg-blue-50 hover:-translate-y-1"
+                        )}
+                      >
+                        {quizSettings.questionCount === count && (
+                          <motion.div
+                            layoutId="activeCountIndicator"
+                            className="absolute -top-2 -right-2 w-4 h-4 bg-blue-500 rounded-full border-2 border-white"
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                          />
+                        )}
+                        <span className="text-lg">{count}</span>
+                      </motion.button>
+                    ))}
+                  </div>
+                </motion.section>
+
+                {/* Time Limit Section */}
+                <motion.section
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.7 }}
+                >
+                  <h2 className="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-3">
+                    <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                      <Clock className="w-5 h-5 text-purple-600" />
+                    </div>
+                    Time Limit (Optional)
+                  </h2>
+                  <div className="flex flex-wrap gap-3">
+                    {[null, 5, 10, 15].map((minutes, index) => (
+                      <motion.button
+                        key={minutes || 'no-limit'}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.3, delay: 0.8 + index * 0.1 }}
+                        onClick={() => setQuizSettings({ 
+                          ...quizSettings, 
+                          timeLimit: minutes ? minutes * 60 : null 
+                        })}
+                        className={cn(
+                          "px-6 py-3 rounded-xl border-2 font-semibold transition-all duration-300",
+                          "focus:outline-none focus:ring-4 focus:ring-purple-500/20",
+                          quizSettings.timeLimit === (minutes ? minutes * 60 : null)
+                            ? "border-purple-500 bg-purple-500 text-white shadow-lg shadow-purple-500/25"
+                            : "border-slate-200 bg-white text-slate-700 hover:border-purple-400 hover:bg-purple-50 hover:-translate-y-1"
+                        )}
+                      >
+                        {minutes ? `${minutes} min` : 'No Limit'}
+                      </motion.button>
+                    ))}
+                  </div>
+                </motion.section>
+
+                {/* Show Pinyin Section */}
+                <motion.section
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.9 }}
+                >
+                  <h2 className="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-3">
+                    <div className="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center">
+                      <Volume2 className="w-5 h-5 text-orange-600" />
+                    </div>
+                    Learning Preferences
+                  </h2>
+                  <div className="bg-slate-50 rounded-2xl p-6">
+                    <label className="flex items-center justify-between cursor-pointer group">
+                      <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center group-hover:bg-orange-50 transition-colors">
+                          <HelpCircle className="w-6 h-6 text-orange-500" />
+                        </div>
+                        <div>
+                          <span className="text-lg font-semibold text-slate-800">Show Pinyin hints</span>
+                          <p className="text-slate-500">Display pronunciation guides for Chinese characters</p>
+                        </div>
+                      </div>
+                      <div className="relative">
+                        <input
+                          type="checkbox"
+                          checked={quizSettings.showPinyin}
+                          onChange={(e) => setQuizSettings({ ...quizSettings, showPinyin: e.target.checked })}
+                          className="sr-only peer"
+                        />
+                        <div className="w-14 h-8 bg-slate-200 rounded-full peer peer-checked:bg-orange-500 transition-colors duration-300" />
+                        <div className="absolute top-1 left-1 w-6 h-6 bg-white rounded-full shadow-md transform peer-checked:translate-x-6 transition-transform duration-300" />
+                      </div>
+                    </label>
+                  </div>
+                </motion.section>
               </div>
-            </div>
 
-            {/* Show Pinyin */}
-            <div className="mb-8">
-              <label className="flex items-center gap-3 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={quizSettings.showPinyin}
-                  onChange={(e) => setQuizSettings({ ...quizSettings, showPinyin: e.target.checked })}
-                  className="w-5 h-5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                />
-                <span className="text-gray-700">Show Pinyin hints</span>
-              </label>
+              {/* Start Quiz Button */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 1.0 }}
+                className="mt-12 pt-8 border-t border-slate-200"
+              >
+                <Button 
+                  onClick={startQuiz}
+                  className="w-full h-16 text-xl bg-gradient-to-br from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 shadow-2xl shadow-blue-500/25 hover:shadow-blue-500/40 transition-all duration-300 transform hover:scale-[1.02] group"
+                >
+                  <div className="flex items-center justify-center">
+                    <Play className="w-6 h-6 mr-3 group-hover:translate-x-1 transition-transform" />
+                    <span className="font-semibold">Begin Your Quiz Journey</span>
+                  </div>
+                </Button>
+                <p className="text-center text-slate-500 mt-4 text-sm">Ready to test your Chinese vocabulary skills?</p>
+              </motion.div>
             </div>
-
-            <Button 
-              onClick={startQuiz}
-              className="w-full h-14 text-lg bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700"
-            >
-              <Play className="w-5 h-5 mr-2" />
-              Start Quiz
-            </Button>
           </motion.div>
         </div>
       </div>
