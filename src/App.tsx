@@ -342,115 +342,219 @@ export default function App() {
   // Home Screen
   if (appState === 'home') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
-        <div className="container mx-auto px-4 py-8 max-w-4xl">
-          {/* Header */}
-          <motion.div 
-            initial={{ opacity: 0, y: -20 }}
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
+        <div className="container mx-auto px-4 py-8 max-w-6xl">
+          {/* Modern Navigation */}
+          <motion.header 
+            initial={{ opacity: 0, y: -30 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-center mb-12"
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            className="flex justify-between items-center mb-16"
           >
-            <div className="inline-flex items-center gap-3 mb-4">
-              <div className="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
-                <GraduationCap className="w-8 h-8 text-white" />
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
+                <GraduationCap className="w-6 h-6 text-white" />
               </div>
+              <span className="text-2xl font-bold text-slate-800">HSK Quiz</span>
             </div>
-            <h1 className="text-5xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-3">
-              HSK Quiz
+            <nav className="hidden md:flex items-center gap-6">
+              <Button 
+                variant="ghost" 
+                onClick={() => setAppState('stats')}
+                className="text-slate-600 hover:text-slate-900 hover:bg-white/50 transition-colors"
+              >
+                <BarChart3 className="w-4 h-4 mr-2" />
+                Stats
+              </Button>
+              <Button 
+                variant="ghost" 
+                onClick={() => setAppState('select-level')}
+                className="text-slate-600 hover:text-slate-900 hover:bg-white/50 transition-colors"
+              >
+                <Play className="w-4 h-4 mr-2" />
+                Quiz
+              </Button>
+            </nav>
+          </motion.header>
+
+          {/* Hero Section */}
+          <motion.section
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+            className="text-center mb-20"
+          >
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 0.6, delay: 0.4, type: "spring", stiffness: 100 }}
+              className="inline-block mb-8"
+            >
+              <div className="w-24 h-24 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-3xl flex items-center justify-center shadow-2xl shadow-blue-500/25">
+                <GraduationCap className="w-12 h-12 text-white" />
+              </div>
+            </motion.div>
+            
+            <h1 className="text-6xl md:text-7xl font-bold bg-gradient-to-r from-slate-800 via-slate-700 to-slate-600 bg-clip-text text-transparent mb-6 leading-tight">
+              Master Chinese
+              <br />
+              <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Vocabulary</span>
             </h1>
-            <p className="text-xl text-gray-600">Master Chinese Vocabulary</p>
-          </motion.div>
+            
+            <p className="text-xl md:text-2xl text-slate-500 max-w-3xl mx-auto mb-10 leading-relaxed">
+              Elevate your HSK exam preparation with our intelligent quiz platform. Practice vocabulary across multiple levels with real-time feedback and progress tracking.
+            </p>
 
-          {/* Stats Cards */}
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10"
-          >
-            <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
-              <CardContent className="p-4 text-center">
-                <Trophy className="w-6 h-6 text-yellow-500 mx-auto mb-2" />
-                <p className="text-2xl font-bold text-gray-800">{totalQuizzes}</p>
-                <p className="text-sm text-gray-500">Quizzes Taken</p>
-              </CardContent>
-            </Card>
-            <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
-              <CardContent className="p-4 text-center">
-                <CheckCircle2 className="w-6 h-6 text-green-500 mx-auto mb-2" />
-                <p className="text-2xl font-bold text-gray-800">{totalQuestions > 0 ? Math.round((totalCorrect / totalQuestions) * 100) : 0}%</p>
-                <p className="text-sm text-gray-500">Accuracy</p>
-              </CardContent>
-            </Card>
-            <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
-              <CardContent className="p-4 text-center">
-                <Star className="w-6 h-6 text-purple-500 mx-auto mb-2" />
-                <p className="text-2xl font-bold text-gray-800">{bestScore}%</p>
-                <p className="text-sm text-gray-500">Best Score</p>
-              </CardContent>
-            </Card>
-            <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
-              <CardContent className="p-4 text-center">
-                <Layers className="w-6 h-6 text-blue-500 mx-auto mb-2" />
-                <p className="text-2xl font-bold text-gray-800">{vocabularyByLevel[1].length + vocabularyByLevel[3].length + vocabularyByLevel[4].length}</p>
-                <p className="text-sm text-gray-500">Total Words</p>
-              </CardContent>
-            </Card>
-          </motion.div>
-
-          {/* Main Actions */}
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="grid md:grid-cols-2 gap-6"
-          >
-            <Button 
-              onClick={() => setAppState('select-level')}
-              className="h-24 text-xl bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 shadow-lg hover:shadow-xl transition-all"
+            {/* Quick Stats Bar */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.6 }}
+              className="flex flex-wrap justify-center gap-6 md:gap-12 mb-12"
             >
-              <Play className="w-6 h-6 mr-3" />
-              Start Quiz
-            </Button>
-            <Button 
-              onClick={() => setAppState('stats')}
-              variant="outline"
-              className="h-24 text-xl border-2 hover:bg-white/50"
-            >
-              <BarChart3 className="w-6 h-6 mr-3" />
-              View Stats
-            </Button>
-          </motion.div>
+              <div className="text-center">
+                <p className="text-3xl font-bold text-slate-800">{totalQuizzes}</p>
+                <p className="text-slate-500">Quizzes Completed</p>
+              </div>
+              <div className="text-center">
+                <p className="text-3xl font-bold text-slate-800">{totalQuestions > 0 ? Math.round((totalCorrect / totalQuestions) * 100) : 0}%</p>
+                <p className="text-slate-500">Overall Accuracy</p>
+              </div>
+              <div className="text-center">
+                <p className="text-3xl font-bold text-slate-800">{bestScore}%</p>
+                <p className="text-slate-500">Best Score</p>
+              </div>
+              <div className="text-center">
+                <p className="text-3xl font-bold text-slate-800">1,200+</p>
+                <p className="text-slate-500">Vocabulary Words</p>
+              </div>
+            </motion.div>
+          </motion.section>
 
-          {/* Features */}
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
+          {/* Primary Actions */}
+          <motion.section
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="mt-12 grid md:grid-cols-3 gap-6"
+            transition={{ duration: 0.6, delay: 0.8 }}
+            className="mb-20"
           >
-            <div className="text-center p-6">
-              <div className="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center mx-auto mb-4">
-                <Layers className="w-7 h-7 text-blue-600" />
-              </div>
-              <h3 className="font-semibold text-gray-800 mb-2">Three HSK Levels</h3>
-              <p className="text-gray-500 text-sm">Practice Level 1, 3, or 4 - from beginner to advanced</p>
+            <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+              <motion.div whileHover={{ scale: 1.02, y: -5 }} whileTap={{ scale: 0.98 }}>
+                <Button 
+                  onClick={() => setAppState('select-level')}
+                  className="w-full h-28 text-xl bg-gradient-to-br from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 shadow-xl hover:shadow-2xl transition-all duration-300 group"
+                >
+                  <div className="flex items-center justify-center">
+                    <Play className="w-7 h-7 mr-4 group-hover:translate-x-1 transition-transform" />
+                    <span className="text-left">
+                      <span className="block font-semibold">Start New Quiz</span>
+                      <span className="text-sm opacity-90">Choose your level & begin</span>
+                    </span>
+                  </div>
+                </Button>
+              </motion.div>
+              
+              <motion.div whileHover={{ scale: 1.02, y: -5 }} whileTap={{ scale: 0.98 }}>
+                <Button 
+                  onClick={() => setAppState('stats')}
+                  variant="outline"
+                  className="w-full h-28 text-xl border-2 border-slate-300 bg-white/50 hover:bg-white hover:border-slate-400 transition-all duration-300 group"
+                >
+                  <div className="flex items-center justify-center">
+                    <BarChart3 className="w-7 h-7 mr-4 group-hover:scale-110 transition-transform" />
+                    <span className="text-left">
+                      <span className="block font-semibold">View Progress</span>
+                      <span className="text-sm opacity-70">Analyze your performance</span>
+                    </span>
+                  </div>
+                </Button>
+              </motion.div>
             </div>
-            <div className="text-center p-6">
-              <div className="w-14 h-14 bg-green-100 rounded-xl flex items-center justify-center mx-auto mb-4">
-                <Brain className="w-7 h-7 text-green-600" />
-              </div>
-              <h3 className="font-semibold text-gray-800 mb-2">Multiple Quiz Modes</h3>
-              <p className="text-gray-500 text-sm">Chinese to English, Pinyin practice, and mixed modes</p>
+          </motion.section>
+
+          {/* Features Section */}
+          <motion.section
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 1.0 }}
+          >
+            <div className="text-center mb-12">
+              <h2 className="text-4xl font-bold text-slate-800 mb-4">Why Choose HSK Quiz?</h2>
+              <p className="text-lg text-slate-500 max-w-2xl mx-auto">Everything you need to master Chinese vocabulary efficiently</p>
             </div>
-            <div className="text-center p-6">
-              <div className="w-14 h-14 bg-purple-100 rounded-xl flex items-center justify-center mx-auto mb-4">
-                <Sparkles className="w-7 h-7 text-purple-600" />
-              </div>
-              <h3 className="font-semibold text-gray-800 mb-2">Modern Design</h3>
-              <p className="text-gray-500 text-sm">Beautiful interface with smooth animations</p>
+
+            <div className="grid md:grid-cols-3 gap-8">
+              {[
+                {
+                  icon: Layers,
+                  title: "Comprehensive HSK Levels",
+                  description: "Practice with authentic Level 1, 3, and 4 vocabulary aligned with official HSK standards.",
+                  color: "blue",
+                  gradient: "from-blue-500 to-blue-600"
+                },
+                {
+                  icon: Brain,
+                  title: "Smart Quiz Modes",
+                  description: "Multiple learning modes: Chinese→English, English→Chinese, Pinyin practice, and adaptive mixed modes.",
+                  color: "green",
+                  gradient: "from-green-500 to-green-600"
+                },
+                {
+                  icon: Sparkles,
+                  title: "Modern Learning Experience",
+                  description: "Beautiful interface with smooth animations, instant feedback, and detailed progress analytics.",
+                  color: "indigo",
+                  gradient: "from-indigo-500 to-indigo-600"
+                }
+              ].map((feature, index) => (
+                <motion.div
+                  key={feature.title}
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 1.2 + index * 0.1 }}
+                  whileHover={{ y: -8, scale: 1.02 }}
+                  className="group relative p-8 bg-white/60 backdrop-blur-sm rounded-3xl border border-white/20 shadow-lg hover:shadow-2xl transition-all duration-300"
+                >
+                  <div className={`absolute -top-6 left-8 w-14 h-14 bg-gradient-to-br ${feature.gradient} rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+                    <feature.icon className="w-7 h-7 text-white" />
+                  </div>
+                  
+                  <div className="pt-8">
+                    <h3 className="text-xl font-bold text-slate-800 mb-4">{feature.title}</h3>
+                    <p className="text-slate-600 leading-relaxed">{feature.description}</p>
+                  </div>
+                  
+                  <div className={`absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r ${feature.gradient} rounded-b-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
+                </motion.div>
+              ))}
             </div>
-          </motion.div>
+          </motion.section>
+
+          {/* Mobile Navigation Footer */}
+          <motion.footer
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 1.5 }}
+            className="md:hidden mt-20 pt-8 border-t border-slate-200"
+          >
+            <div className="flex justify-around">
+              <Button 
+                onClick={() => setAppState('select-level')}
+                className="flex-1 mx-2 bg-blue-500 hover:bg-blue-600"
+              >
+                <Play className="w-5 h-5 mr-2" />
+                Quiz
+              </Button>
+              <Button 
+                onClick={() => setAppState('stats')}
+                variant="outline"
+                className="flex-1 mx-2"
+              >
+                <BarChart3 className="w-5 h-5 mr-2" />
+                Stats
+              </Button>
+            </div>
+          </motion.footer>
         </div>
       </div>
     );
@@ -1122,155 +1226,330 @@ export default function App() {
   // Stats Screen
   if (appState === 'stats') {
     const accuracy = totalQuestions > 0 ? Math.round((totalCorrect / totalQuestions) * 100) : 0;
+    const overallProgress = totalQuestions > 0 ? Math.min((totalCorrect / totalQuestions) * 100, 100) : 0;
     
     return (
-      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 py-8">
-        <div className="container mx-auto px-4 max-w-2xl">
-          <div className="flex items-center justify-between mb-8">
-            <Button variant="ghost" onClick={() => setAppState('home')}>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 py-8">
+        <div className="container mx-auto px-4 max-w-4xl">
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center mb-10"
+          >
+            <div className="inline-flex items-center gap-3 mb-4">
+              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg">
+                <BarChart3 className="w-8 h-8 text-white" />
+              </div>
+            </div>
+            <Button variant="ghost" onClick={() => setAppState('home')} className="absolute top-6 left-6">
               <Home className="w-5 h-5 mr-2" />
-              Back
+              Home
             </Button>
-            <h2 className="text-2xl font-bold text-gray-800">Your Statistics</h2>
-            <div className="w-20" />
-          </div>
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent mb-2">
+              Your Statistics
+            </h1>
+            <p className="text-lg text-slate-500">Track your learning journey</p>
+          </motion.div>
 
-          <div className="grid gap-6">
-            <Card className="bg-white shadow-lg border-0">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <BarChart3 className="w-5 h-5 text-indigo-600" />
-                  Overall Progress
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2 gap-6">
-                  <div className="text-center p-4 bg-indigo-50 rounded-xl">
-                    <p className="text-4xl font-bold text-indigo-700">{totalQuizzes}</p>
-                    <p className="text-gray-600">Quizzes Taken</p>
-                  </div>
-                  <div className="text-center p-4 bg-purple-50 rounded-xl">
-                    <p className="text-4xl font-bold text-purple-700">{totalQuestions}</p>
-                    <p className="text-gray-600">Questions Answered</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-white shadow-lg border-0">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Target className="w-5 h-5 text-green-600" />
-                  Performance
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div>
-                    <div className="flex justify-between mb-2">
-                      <span className="text-gray-600">Accuracy Rate</span>
-                      <span className="font-bold text-gray-800">{accuracy}%</span>
+          <div className="grid gap-8">
+            {/* Overall Progress Card */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+            >
+              <Card className="bg-white/80 backdrop-blur-sm shadow-xl border-0 overflow-hidden">
+                <CardHeader className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white">
+                  <CardTitle className="flex items-center gap-3 text-xl">
+                    <BarChart3 className="w-6 h-6" />
+                    Overall Progress
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-8">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    <div className="text-center group">
+                      <div className="relative w-20 h-20 mx-auto mb-3">
+                        <svg className="w-full h-full" viewBox="0 0 36 36">
+                          <path
+                            className="text-slate-200"
+                            d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="3"
+                          />
+                          <motion.path
+                            className="text-blue-500"
+                            d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="3"
+                            strokeDasharray={`${overallProgress}, 100`}
+                            initial={{ strokeDasharray: "0, 100" }}
+                            animate={{ strokeDasharray: `${overallProgress}, 100` }}
+                            transition={{ duration: 1, ease: "easeOut" }}
+                          />
+                        </svg>
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <Trophy className="w-8 h-8 text-blue-500" />
+                        </div>
+                      </div>
+                      <p className="text-3xl font-bold text-slate-800">{totalQuizzes}</p>
+                      <p className="text-sm text-slate-500">Quizzes Taken</p>
                     </div>
-                    <Progress value={accuracy} className="h-3" />
-                  </div>
-                  <div className="grid grid-cols-2 gap-4 mt-4">
+                    <div className="text-center p-4 bg-slate-50 rounded-xl">
+                      <Target className="w-8 h-8 text-green-500 mx-auto mb-2" />
+                      <p className="text-3xl font-bold text-slate-800">{totalQuestions}</p>
+                      <p className="text-sm text-slate-500">Questions Answered</p>
+                    </div>
                     <div className="text-center p-4 bg-green-50 rounded-xl">
+                      <CheckCircle2 className="w-8 h-8 text-green-500 mx-auto mb-2" />
                       <p className="text-3xl font-bold text-green-700">{totalCorrect}</p>
-                      <p className="text-gray-600">Correct Answers</p>
+                      <p className="text-sm text-green-600">Correct Answers</p>
                     </div>
                     <div className="text-center p-4 bg-yellow-50 rounded-xl">
+                      <Star className="w-8 h-8 text-yellow-500 mx-auto mb-2" />
                       <p className="text-3xl font-bold text-yellow-700">{bestScore}%</p>
-                      <p className="text-gray-600">Best Score</p>
+                      <p className="text-sm text-yellow-600">Best Score</p>
                     </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </motion.div>
+
+            {/* Performance Card */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+            >
+              <Card className="bg-white/80 backdrop-blur-sm shadow-xl border-0">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-3 text-xl">
+                    <Target className="w-6 h-6 text-green-600" />
+                    Performance Analytics
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-8">
+                  <div className="grid md:grid-cols-2 gap-8">
+                    <div>
+                      <div className="flex justify-between items-center mb-3">
+                        <span className="text-slate-600 font-medium">Overall Accuracy</span>
+                        <span className="text-2xl font-bold text-slate-800">{accuracy}%</span>
+                      </div>
+                      <div className="relative h-4 bg-slate-200 rounded-full overflow-hidden">
+                        <motion.div
+                          className="absolute top-0 left-0 h-full bg-gradient-to-r from-green-400 to-green-600 rounded-full"
+                          initial={{ width: 0 }}
+                          animate={{ width: `${accuracy}%` }}
+                          transition={{ duration: 1.5, ease: "easeOut" }}
+                        />
+                      </div>
+                      <div className="flex justify-between text-xs text-slate-500 mt-2">
+                        <span>0%</span>
+                        <span>50%</span>
+                        <span>100%</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-center">
+                      <div className="relative w-32 h-32">
+                        <svg className="w-full h-full" viewBox="0 0 36 36">
+                          <path
+                            className="text-slate-200"
+                            d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="3"
+                          />
+                          <motion.path
+                            className="text-green-500"
+                            d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="3"
+                            strokeDasharray={`${accuracy}, 100`}
+                            initial={{ strokeDasharray: "0, 100" }}
+                            animate={{ strokeDasharray: `${accuracy}, 100` }}
+                            transition={{ duration: 1.5, ease: "easeOut", delay: 0.3 }}
+                          />
+                        </svg>
+                        <div className="absolute inset-0 flex flex-col items-center justify-center">
+                          <span className="text-2xl font-bold text-slate-800">{accuracy}%</span>
+                          <span className="text-xs text-slate-500">Accuracy</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
 
             {/* Level-specific Stats */}
-            <Card className="bg-white shadow-lg border-0">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Layers className="w-5 h-5 text-blue-600" />
-                  Level Progress
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="p-4 bg-green-50 rounded-xl">
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="font-semibold text-green-800">HSK Level 1</span>
-                      <Badge className="bg-green-500">{levelStats[1].quizzes} quizzes</Badge>
-                    </div>
-                    <Progress 
-                      value={levelStats[1].total > 0 ? (levelStats[1].correct / levelStats[1].total) * 100 : 0} 
-                      className="h-2" 
-                    />
-                    <p className="text-sm text-green-600 mt-1">
-                      {levelStats[1].total > 0 ? Math.round((levelStats[1].correct / levelStats[1].total) * 100) : 0}% accuracy
-                    </p>
-                  </div>
-                  
-                  <div className="p-4 bg-purple-50 rounded-xl">
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="font-semibold text-purple-800">HSK Level 3</span>
-                      <Badge className="bg-purple-500">{levelStats[3].quizzes} quizzes</Badge>
-                    </div>
-                    <Progress 
-                      value={levelStats[3].total > 0 ? (levelStats[3].correct / levelStats[3].total) * 100 : 0} 
-                      className="h-2" 
-                    />
-                    <p className="text-sm text-purple-600 mt-1">
-                      {levelStats[3].total > 0 ? Math.round((levelStats[3].correct / levelStats[3].total) * 100) : 0}% accuracy
-                    </p>
-                  </div>
-                  
-                  <div className="p-4 bg-orange-50 rounded-xl">
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="font-semibold text-orange-800">HSK Level 4</span>
-                      <Badge className="bg-orange-500">{levelStats[4].quizzes} quizzes</Badge>
-                    </div>
-                    <Progress 
-                      value={levelStats[4].total > 0 ? (levelStats[4].correct / levelStats[4].total) * 100 : 0} 
-                      className="h-2" 
-                    />
-                    <p className="text-sm text-orange-600 mt-1">
-                      {levelStats[4].total > 0 ? Math.round((levelStats[4].correct / levelStats[4].total) * 100) : 0}% accuracy
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-white shadow-lg border-0">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <BookOpen className="w-5 h-5 text-blue-600" />
-                  Vocabulary Progress
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-center p-6 bg-blue-50 rounded-xl">
-                  <p className="text-5xl font-bold text-blue-700 mb-2">1200</p>
-                  <p className="text-gray-600">Total Words Available</p>
-                  <div className="flex justify-center gap-4 mt-3 text-sm text-gray-500 flex-wrap">
-                    <span>Level 1: 300 words</span>
-                    <span>•</span>
-                    <span>Level 3: 300 words</span>
-                    <span>•</span>
-                    <span>Level 4: 600 words</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Button 
-              onClick={() => setAppState('select-level')}
-              className="h-14 text-lg bg-gradient-to-r from-indigo-500 to-purple-600"
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
             >
-              <Play className="w-5 h-5 mr-2" />
-              Start New Quiz
-            </Button>
+              <Card className="bg-white/80 backdrop-blur-sm shadow-xl border-0">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-3 text-xl">
+                    <Layers className="w-6 h-6 text-blue-600" />
+                    Level Progress
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-8">
+                  <div className="grid md:grid-cols-3 gap-6">
+                    {[1, 3, 4].map((level) => {
+                      const stats = levelStats[level as HSKLevel];
+                      const levelAccuracy = stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0;
+                      const levelColor = level === 1 ? 'green' : level === 3 ? 'purple' : 'orange';
+                      const gradientFrom = level === 1 ? 'from-green-400' : level === 3 ? 'from-purple-400' : 'from-orange-400';
+                      const gradientTo = level === 1 ? 'to-green-600' : level === 3 ? 'to-purple-600' : 'to-orange-600';
+                      
+                      return (
+                        <motion.div
+                          key={level}
+                          whileHover={{ scale: 1.02, y: -5 }}
+                          className={`p-6 bg-${levelColor}-50 rounded-2xl border-2 border-${levelColor}-100`}
+                        >
+                          <div className="flex items-center justify-between mb-4">
+                            <div>
+                              <h3 className={`text-lg font-bold text-${levelColor}-800`}>HSK Level {level}</h3>
+                              <p className={`text-sm text-${levelColor}-600`}>{stats.quizzes} quizzes taken</p>
+                            </div>
+                            <Badge className={`bg-${levelColor}-500 text-white`}>{stats.quizzes}</Badge>
+                          </div>
+                          
+                          <div className="space-y-3">
+                            <div className="flex justify-between text-sm">
+                              <span className={`text-${levelColor}-700`}>Progress</span>
+                              <span className={`font-bold text-${levelColor}-800`}>{levelAccuracy}%</span>
+                            </div>
+                            <div className="relative h-2 bg-white rounded-full overflow-hidden">
+                              <motion.div
+                                className={`absolute top-0 left-0 h-full bg-gradient-to-r ${gradientFrom} ${gradientTo} rounded-full`}
+                                initial={{ width: 0 }}
+                                animate={{ width: `${levelAccuracy}%` }}
+                                transition={{ duration: 1, ease: "easeOut", delay: 0.4 + level * 0.1 }}
+                              />
+                            </div>
+                            <div className="flex justify-between text-xs text-gray-500">
+                              <span>{stats.correct} correct</span>
+                              <span>{stats.total} total</span>
+                            </div>
+                          </div>
+                        </motion.div>
+                      );
+                    })}
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+
+            {/* Vocabulary Progress */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+            >
+              <Card className="bg-white/80 backdrop-blur-sm shadow-xl border-0">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-3 text-xl">
+                    <BookOpen className="w-6 h-6 text-blue-600" />
+                    Vocabulary Mastery
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-8">
+                  <div className="grid md:grid-cols-2 gap-8 items-center">
+                    <div className="text-center">
+                      <div className="relative w-40 h-40 mx-auto mb-4">
+                        <svg className="w-full h-full" viewBox="0 0 36 36">
+                          <path
+                            className="text-slate-200"
+                            d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="3"
+                          />
+                          <motion.path
+                            className="text-blue-500"
+                            d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="3"
+                            strokeDasharray="75, 100"
+                            initial={{ strokeDasharray: "0, 100" }}
+                            animate={{ strokeDasharray: "75, 100" }}
+                            transition={{ duration: 2, ease: "easeOut", delay: 0.5 }}
+                          />
+                        </svg>
+                        <div className="absolute inset-0 flex flex-col items-center justify-center">
+                          <span className="text-3xl font-bold text-slate-800">1,200</span>
+                          <span className="text-sm text-slate-500">Words</span>
+                        </div>
+                      </div>
+                      <h3 className="text-xl font-bold text-slate-800 mb-2">Vocabulary Collection</h3>
+                      <p className="text-slate-500">Complete HSK curriculum at your fingertips</p>
+                    </div>
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between p-4 bg-blue-50 rounded-xl">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                            <GraduationCap className="w-5 h-5 text-green-600" />
+                          </div>
+                          <div>
+                            <p className="font-semibold text-slate-800">Level 1</p>
+                            <p className="text-sm text-slate-500">Beginner Foundation</p>
+                          </div>
+                        </div>
+                        <Badge className="bg-green-500 text-white">300 words</Badge>
+                      </div>
+                      
+                      <div className="flex items-center justify-between p-4 bg-purple-50 rounded-xl">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                            <Brain className="w-5 h-5 text-purple-600" />
+                          </div>
+                          <div>
+                            <p className="font-semibold text-slate-800">Level 3</p>
+                            <p className="text-sm text-slate-500">Intermediate Skills</p>
+                          </div>
+                        </div>
+                        <Badge className="bg-purple-500 text-white">300 words</Badge>
+                      </div>
+                      
+                      <div className="flex items-center justify-between p-4 bg-orange-50 rounded-xl">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+                            <Star className="w-5 h-5 text-orange-600" />
+                          </div>
+                          <div>
+                            <p className="font-semibold text-slate-800">Level 4</p>
+                            <p className="text-sm text-slate-500">Advanced Mastery</p>
+                          </div>
+                        </div>
+                        <Badge className="bg-orange-500 text-white">600 words</Badge>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+
+            {/* Action Button */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+              className="text-center"
+            >
+              <Button 
+                onClick={() => setAppState('select-level')}
+                className="h-16 px-10 text-xl bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+              >
+                <Play className="w-6 h-6 mr-3" />
+                Continue Learning
+              </Button>
+            </motion.div>
           </div>
         </div>
       </div>
