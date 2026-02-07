@@ -795,30 +795,62 @@ export default function App() {
                   return (
                     <motion.button
                       key={option}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.1 }}
+                      initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      transition={{ delay: index * 0.1, type: "spring", stiffness: 300, damping: 20 }}
                       onClick={() => handleAnswer(option)}
                       disabled={isAnswered}
                       className={cn(
-                        "p-5 rounded-xl border-2 text-left transition-all duration-200",
-                        !isAnswered && "hover:border-indigo-300 hover:bg-indigo-50",
-                        isAnswered && isCorrect && "border-green-500 bg-green-50",
-                        isAnswered && isSelected && !isCorrect && "border-red-500 bg-red-50",
-                        isAnswered && !isSelected && !isCorrect && "border-gray-200 opacity-50"
+                        "p-5 rounded-xl border-2 text-left transition-all duration-300 transform",
+                        "focus:outline-none focus:ring-4 focus:ring-indigo-300 focus:ring-opacity-50",
+                        !isAnswered && [
+                          "hover:border-indigo-400 hover:bg-indigo-50 hover:scale-105 hover:shadow-lg",
+                          "active:scale-95 active:bg-indigo-100"
+                        ],
+                        isAnswered && isCorrect && "border-green-500 bg-green-50 scale-105 shadow-lg",
+                        isAnswered && isSelected && !isCorrect && "border-red-500 bg-red-50 scale-105 shadow-lg",
+                        isAnswered && !isSelected && !isCorrect && "border-gray-200 opacity-60",
+                        "disabled:cursor-not-allowed"
                       )}
                     >
                       <div className="flex items-center justify-between">
                         <span className={cn(
-                          "text-lg font-medium",
-                          isAnswered && isCorrect && "text-green-700",
-                          isAnswered && isSelected && !isCorrect && "text-red-700"
+                          "text-lg font-medium leading-relaxed",
+                          !isAnswered && "text-gray-800",
+                          isAnswered && isCorrect && "text-green-800 font-semibold",
+                          isAnswered && isSelected && !isCorrect && "text-red-800 font-semibold",
+                          isAnswered && !isSelected && !isCorrect && "text-gray-500"
                         )}>
                           {option} 
                         </span>
-                        {isAnswered && isCorrect && <CheckCircle2 className="w-6 h-6 text-green-500" />}
-                        {isAnswered && isSelected && !isCorrect && <XCircle className="w-6 h-6 text-red-500" />}
+                        {isAnswered && (
+                          <motion.div
+                            initial={{ scale: 0, rotate: -180 }}
+                            animate={{ scale: 1, rotate: 0 }}
+                            transition={{ type: "spring", stiffness: 400, damping: 15, delay: 0.2 }}
+                          >
+                            {isCorrect ? (
+                              <CheckCircle2 className="w-6 h-6 text-green-500" />
+                            ) : (
+                              isSelected && <XCircle className="w-6 h-6 text-red-500" />
+                            )}
+                          </motion.div>
+                        )}
                       </div>
+                      {isAnswered && isSelected && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: "auto" }}
+                          className="mt-3 pt-3 border-t border-current border-opacity-20"
+                        >
+                          <p className={cn(
+                            "text-sm",
+                            isCorrect ? "text-green-700" : "text-red-700"
+                          )}>
+                            {isCorrect ? "✓ Correct answer!" : "✗ Incorrect answer"}
+                          </p>
+                        </motion.div>
+                      )}
                     </motion.button>
                   );
                 })}
