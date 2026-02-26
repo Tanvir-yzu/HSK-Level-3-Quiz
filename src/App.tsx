@@ -1013,6 +1013,12 @@ export default function App() {
                 {options.map((option, index) => {
                   const isCorrect = option === correctAnswer;
                   const isSelected = selectedAnswer === option;
+                  const optionItem = vocabularyByLevel[quizSettings.level].find((item) => {
+                    if (currentMode === 'chinese-to-english') return item.english === option;
+                    if (currentMode === 'english-to-chinese' || currentMode === 'pinyin-to-chinese') return item.chinese === option;
+                    if (currentMode === 'chinese-to-pinyin') return item.pinyin === option;
+                    return false;
+                  });
                   
                   return (
                     <motion.button
@@ -1073,36 +1079,28 @@ export default function App() {
                           </p>
                         </motion.div>
                       )}
+
+                      {isAnswered && optionItem && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: "auto" }}
+                          className="mt-3 pt-3 border-t border-current border-opacity-20 space-y-1"
+                        >
+                          <p className="text-sm text-gray-700">
+                            <span className="font-semibold">Chinese:</span> {optionItem.chinese}
+                          </p>
+                          <p className="text-sm text-gray-700">
+                            <span className="font-semibold">Pinyin:</span> {optionItem.pinyin}
+                          </p>
+                          <p className="text-sm text-gray-700">
+                            <span className="font-semibold">English:</span> {optionItem.english}
+                          </p>
+                        </motion.div>
+                      )}
                     </motion.button>
                   );
                 })}
               </div>
-
-              {/* Action Buttons */}
-              {isAnswered && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="mt-6"
-                >
-                  <Card className="bg-slate-50 border-slate-200">
-                    <CardContent className="p-4">
-                      <p className="text-sm font-semibold text-slate-600 mb-2">Correct Answer</p>
-                      <div className="space-y-1">
-                        <p className="text-lg text-slate-900">
-                          <span className="font-semibold">Chinese:</span> {currentQuestion.chinese}
-                        </p>
-                        <p className="text-base text-slate-700">
-                          <span className="font-semibold">Pinyin:</span> {currentQuestion.pinyin}
-                        </p>
-                        <p className="text-base text-slate-700">
-                          <span className="font-semibold">English:</span> {currentQuestion.english}
-                        </p>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              )}
 
               {isAnswered && (
                 <motion.div
