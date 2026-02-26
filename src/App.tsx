@@ -987,7 +987,7 @@ export default function App() {
                       {questionText}
                     </h2>
                     
-                    {quizSettings.showPinyin && currentMode !== 'pinyin-to-chinese' && currentMode !== 'chinese-to-pinyin' && (
+                    {quizSettings.showPinyin && isAnswered && currentMode !== 'pinyin-to-chinese' && (
                       <p className="text-xl text-gray-400">{currentQuestion.pinyin}</p>
                     )}
                     
@@ -1079,6 +1079,31 @@ export default function App() {
               </div>
 
               {/* Action Buttons */}
+              {isAnswered && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mt-6"
+                >
+                  <Card className="bg-slate-50 border-slate-200">
+                    <CardContent className="p-4">
+                      <p className="text-sm font-semibold text-slate-600 mb-2">Correct Answer</p>
+                      <div className="space-y-1">
+                        <p className="text-lg text-slate-900">
+                          <span className="font-semibold">Chinese:</span> {currentQuestion.chinese}
+                        </p>
+                        <p className="text-base text-slate-700">
+                          <span className="font-semibold">Pinyin:</span> {currentQuestion.pinyin}
+                        </p>
+                        <p className="text-base text-slate-700">
+                          <span className="font-semibold">English:</span> {currentQuestion.english}
+                        </p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              )}
+
               {isAnswered && (
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
