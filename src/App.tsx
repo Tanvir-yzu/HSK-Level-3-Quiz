@@ -142,6 +142,14 @@ function getCorrectAnswer(item: VocabularyItem, mode: QuizMode): string {
   }
 }
 
+function AppFooter() {
+  return (
+    <footer className="mt-8 pb-4 text-center text-sm text-slate-500">
+      Made By Tanvir(TN)
+    </footer>
+  );
+}
+
 export default function App() {
   const [appState, setAppState] = useState<AppState>('home');
   const [quizSettings, setQuizSettings] = useState<QuizSettings>({
@@ -585,6 +593,7 @@ export default function App() {
             </div>
           </motion.footer>
         </div>
+        <AppFooter />
       </div>
     );
   }
@@ -675,6 +684,7 @@ export default function App() {
           </div>
           </motion.div>
         </div>
+        <AppFooter />
       </div>
     );
   }
@@ -932,6 +942,7 @@ export default function App() {
             </div>
           </motion.div>
         </div>
+        <AppFooter />
       </div>
     );
   }
@@ -1185,6 +1196,7 @@ export default function App() {
             </motion.div>
           </AnimatePresence>
         </div>
+        <AppFooter />
       </div>
     );
   }
@@ -1295,6 +1307,7 @@ export default function App() {
             </div>
           </motion.div>
         </div>
+        <AppFooter />
       </div>
     );
   }
@@ -1412,6 +1425,7 @@ export default function App() {
             </Button>
           </div>
         </div>
+        <AppFooter />
       </div>
     );
   }
@@ -1745,6 +1759,7 @@ export default function App() {
             </motion.div>
           </div>
         </div>
+        <AppFooter />
       </div>
     );
   }
