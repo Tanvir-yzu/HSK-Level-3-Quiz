@@ -941,6 +941,7 @@ export default function App() {
     const questionText = getQuestionText(currentQuestion, currentMode);
     const correctAnswer = getCorrectAnswer(currentQuestion, currentMode);
     const selectedLevel = hskLevels.find(l => l.level === quizSettings.level);
+    const currentModeMeta = quizModes.find(mode => mode.id === currentMode);
     
     return (
       <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 py-4">
@@ -1015,6 +1016,15 @@ export default function App() {
                     )}>
                       {questionText}
                     </h2>
+
+                    <div className="flex flex-wrap justify-center gap-2 mb-2">
+                      <Badge variant="secondary" className="text-sm px-3 py-1">
+                        {currentModeMeta?.name}
+                      </Badge>
+                      <Badge variant="outline" className="text-sm px-3 py-1 text-slate-600">
+                        {isAnswered ? 'Answer Revealed' : 'Select One Option'}
+                      </Badge>
+                    </div>
                     
                     {quizSettings.showPinyin && isAnswered && currentMode !== 'pinyin-to-chinese' && (
                       <p className="text-xl text-gray-400">{currentQuestion.pinyin}</p>
@@ -1058,7 +1068,7 @@ export default function App() {
                       onClick={() => handleAnswer(option)}
                       disabled={isAnswered}
                       className={cn(
-                        "p-5 rounded-xl border-2 text-left transition-all duration-300 transform",
+                        "p-4 md:p-5 rounded-xl border-2 text-left transition-all duration-300 transform",
                         "focus:outline-none focus:ring-4 focus:ring-indigo-300 focus:ring-opacity-50",
                         !isAnswered && [
                           "hover:border-indigo-400 hover:bg-indigo-50 hover:scale-105 hover:shadow-lg",
@@ -1066,20 +1076,34 @@ export default function App() {
                         ],
                         isAnswered && isCorrect && "border-green-500 bg-green-50 scale-105 shadow-lg",
                         isAnswered && isSelected && !isCorrect && "border-red-500 bg-red-50 scale-105 shadow-lg",
-                        isAnswered && !isSelected && !isCorrect && "border-gray-200 opacity-60",
+                        isAnswered && !isSelected && !isCorrect && "border-gray-200 bg-gray-50/70",
                         "disabled:cursor-not-allowed"
                       )}
                     >
-                      <div className="flex items-center justify-between">
-                        <span className={cn(
-                          "text-lg font-medium leading-relaxed",
-                          !isAnswered && "text-gray-800",
-                          isAnswered && isCorrect && "text-green-800 font-semibold",
-                          isAnswered && isSelected && !isCorrect && "text-red-800 font-semibold",
-                          isAnswered && !isSelected && !isCorrect && "text-gray-500"
-                        )}>
-                          {option} 
-                        </span>
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex items-start gap-3 min-w-0">
+                          <div className={cn(
+                            "w-7 h-7 rounded-full border flex items-center justify-center text-xs font-bold shrink-0",
+                            !isAnswered && "border-indigo-300 text-indigo-600 bg-indigo-50",
+                            isAnswered && isCorrect && "border-green-300 text-green-700 bg-green-100",
+                            isAnswered && isSelected && !isCorrect && "border-red-300 text-red-700 bg-red-100",
+                            isAnswered && !isSelected && !isCorrect && "border-gray-300 text-gray-500 bg-white"
+                          )}>
+                            {String.fromCharCode(65 + index)}
+                          </div>
+                          <div className="min-w-0">
+                            <p className={cn(
+                              "text-lg font-medium leading-relaxed break-words",
+                              !isAnswered && "text-gray-800",
+                              isAnswered && isCorrect && "text-green-800 font-semibold",
+                              isAnswered && isSelected && !isCorrect && "text-red-800 font-semibold",
+                              isAnswered && !isSelected && !isCorrect && "text-gray-700"
+                            )}>
+                              {option}
+                            </p>
+                          </div>
+                        </div>
+
                         {isAnswered && (
                           <motion.div
                             initial={{ scale: 0, rotate: -180 }}
@@ -1094,36 +1118,35 @@ export default function App() {
                           </motion.div>
                         )}
                       </div>
-                      {isAnswered && isSelected && (
-                        <motion.div
-                          initial={{ opacity: 0, height: 0 }}
-                          animate={{ opacity: 1, height: "auto" }}
-                          className="mt-3 pt-3 border-t border-current border-opacity-20"
-                        >
-                          <p className={cn(
-                            "text-sm",
-                            isCorrect ? "text-green-700" : "text-red-700"
-                          )}>
-                            {isCorrect ? "✓ Correct answer!" : "✗ Incorrect answer"}
-                          </p>
-                        </motion.div>
-                      )}
 
-                      {isAnswered && optionItem && (
+                      {isAnswered && (
                         <motion.div
                           initial={{ opacity: 0, height: 0 }}
                           animate={{ opacity: 1, height: "auto" }}
-                          className="mt-3 pt-3 border-t border-current border-opacity-20 space-y-1"
+                          className="mt-3 pt-3 border-t border-current border-opacity-20 space-y-2"
                         >
-                          <p className="text-sm text-gray-700">
-                            <span className="font-semibold">Chinese:</span> {optionItem.chinese}
-                          </p>
-                          <p className="text-sm text-gray-700">
-                            <span className="font-semibold">Pinyin:</span> {optionItem.pinyin}
-                          </p>
-                          <p className="text-sm text-gray-700">
-                            <span className="font-semibold">English:</span> {optionItem.english}
-                          </p>
+                          {isSelected && (
+                            <p className={cn(
+                              "text-sm font-medium",
+                              isCorrect ? "text-green-700" : "text-red-700"
+                            )}>
+                              {isCorrect ? "✓ Correct answer!" : "✗ Incorrect answer"}
+                            </p>
+                          )}
+
+                          {optionItem && (
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-sm">
+                              <p className="text-gray-700">
+                                <span className="font-semibold">Chinese:</span> {optionItem.chinese}
+                              </p>
+                              <p className="text-gray-700">
+                                <span className="font-semibold">Pinyin:</span> {optionItem.pinyin}
+                              </p>
+                              <p className="text-gray-700">
+                                <span className="font-semibold">English:</span> {optionItem.english}
+                              </p>
+                            </div>
+                          )}
                         </motion.div>
                       )}
                     </motion.button>
