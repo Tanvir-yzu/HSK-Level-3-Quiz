@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { 
   Play, Trophy, Clock, CheckCircle2, XCircle, 
   HelpCircle, ChevronRight, Volume2, BookOpen, Target, Star,
@@ -38,6 +38,20 @@ const hskLevels: { level: HSKLevel; name: string; description: string; count: nu
   { level: 3, name: 'HSK Level 3', description: 'Intermediate - Expanded vocabulary', count: 300, color: 'from-indigo-400 to-purple-600' },
   { level: 4, name: 'HSK Level 4', description: 'Advanced - Professional vocabulary', count: 600, color: 'from-orange-400 to-red-600' },
 ];
+
+const defaultLevelStats: Record<HSKLevel, { quizzes: number; correct: number; total: number }> = {
+  1: { quizzes: 0, correct: 0, total: 0 },
+  3: { quizzes: 0, correct: 0, total: 0 },
+  4: { quizzes: 0, correct: 0, total: 0 },
+};
+
+type StatsSnapshot = {
+  totalQuizzes: number;
+  totalCorrect: number;
+  totalQuestions: number;
+  bestScore: number;
+  levelStats: Record<HSKLevel, { quizzes: number; correct: number; total: number }>;
+};
 
 function shuffleArray<T>(array: T[]): T[] {
   const shuffled = [...array];
@@ -140,6 +154,7 @@ export default function App() {
   
   const [quizQuestions, setQuizQuestions] = useState<VocabularyItem[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [currentMode, setCurrentMode] = useState<QuizMode>('chinese-to-english');
   const [options, setOptions] = useState<string[]>([]);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [isAnswered, setIsAnswered] = useState(false);
@@ -152,28 +167,43 @@ export default function App() {
   const [bestStreak, setBestStreak] = useState(0);
   const [showHint, setShowHint] = useState(false);
 
-  // Stats
-  const [totalQuizzes, setTotalQuizzes] = useState(0);
-  const [totalCorrect, setTotalCorrect] = useState(0);
-  const [totalQuestions, setTotalQuestions] = useState(0);
-  const [bestScore, setBestScore] = useState(0);
-  const [levelStats, setLevelStats] = useState<Record<HSKLevel, { quizzes: number; correct: number; total: number }>>({
-    1: { quizzes: 0, correct: 0, total: 0 },
-    3: { quizzes: 0, correct: 0, total: 0 },
-    4: { quizzes: 0, correct: 0, total: 0 },
+  const [initialStats] = useState<StatsSnapshot>(() => {
+    const fallback: StatsSnapshot = {
+      totalQuizzes: 0,
+      totalCorrect: 0,
+      totalQuestions: 0,
+      bestScore: 0,
+      levelStats: defaultLevelStats,
+    };
+
+    if (typeof window === 'undefined') {
+      return fallback;
+    }
+
+    try {
+      const savedStats = window.localStorage.getItem('hsk-quiz-stats');
+      if (!savedStats) {
+        return fallback;
+      }
+      const stats = JSON.parse(savedStats) as Partial<StatsSnapshot>;
+      return {
+        totalQuizzes: stats.totalQuizzes || 0,
+        totalCorrect: stats.totalCorrect || 0,
+        totalQuestions: stats.totalQuestions || 0,
+        bestScore: stats.bestScore || 0,
+        levelStats: stats.levelStats || defaultLevelStats,
+      };
+    } catch {
+      return fallback;
+    }
   });
 
-  useEffect(() => {
-    const savedStats = localStorage.getItem('hsk-quiz-stats');
-    if (savedStats) {
-      const stats = JSON.parse(savedStats);
-      setTotalQuizzes(stats.totalQuizzes || 0);
-      setTotalCorrect(stats.totalCorrect || 0);
-      setTotalQuestions(stats.totalQuestions || 0);
-      setBestScore(stats.bestScore || 0);
-      setLevelStats(stats.levelStats || { 1: { quizzes: 0, correct: 0, total: 0 }, 3: { quizzes: 0, correct: 0, total: 0 }, 4: { quizzes: 0, correct: 0, total: 0 } });
-    }
-  }, []);
+  // Stats
+  const [totalQuizzes, setTotalQuizzes] = useState(initialStats.totalQuizzes);
+  const [totalCorrect, setTotalCorrect] = useState(initialStats.totalCorrect);
+  const [totalQuestions, setTotalQuestions] = useState(initialStats.totalQuestions);
+  const [bestScore, setBestScore] = useState(initialStats.bestScore);
+  const [levelStats, setLevelStats] = useState<Record<HSKLevel, { quizzes: number; correct: number; total: number }>>(initialStats.levelStats);
 
   useEffect(() => {
     localStorage.setItem('hsk-quiz-stats', JSON.stringify({
@@ -185,20 +215,12 @@ export default function App() {
     }));
   }, [totalQuizzes, totalCorrect, totalQuestions, bestScore, levelStats]);
 
-  useEffect(() => {
-    if (quizSettings.timeLimit && appState === 'quiz' && timeLeft !== null) {
-      const timer = setInterval(() => {
-        setTimeLeft((prev) => {
-          if (prev === null || prev <= 1) {
-            finishQuiz();
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-      return () => clearInterval(timer);
+  const getQuestionMode = useCallback((): QuizMode => {
+    if (quizSettings.mode !== 'mixed') {
+      return quizSettings.mode;
     }
-  }, [quizSettings.timeLimit, appState, timeLeft]);
+    return quizModes[Math.floor(Math.random() * 4)].id;
+  }, [quizSettings.mode]);
 
   const startQuiz = () => {
     const vocabulary = vocabularyByLevel[quizSettings.level];
@@ -213,10 +235,9 @@ export default function App() {
     setStartTime(Date.now());
     setTimeLeft(quizSettings.timeLimit);
     
-    const currentMode = quizSettings.mode === 'mixed' 
-      ? quizModes[Math.floor(Math.random() * 4)].id 
-      : quizSettings.mode;
-    setOptions(generateOptions(selected[0], vocabulary, currentMode));
+    const firstQuestionMode = getQuestionMode();
+    setCurrentMode(firstQuestionMode);
+    setOptions(generateOptions(selected[0], vocabulary, firstQuestionMode));
     
     setAppState('quiz');
   };
@@ -225,9 +246,6 @@ export default function App() {
     if (isAnswered) return;
     
     const currentQuestion = quizQuestions[currentQuestionIndex];
-    const currentMode = quizSettings.mode === 'mixed'
-      ? quizModes[Math.floor(Math.random() * 4)].id
-      : quizSettings.mode;
     const correct = answer === getCorrectAnswer(currentQuestion, currentMode);
     
     setSelectedAnswer(answer);
@@ -260,10 +278,9 @@ export default function App() {
       setShowHint(false);
       
       const vocabulary = vocabularyByLevel[quizSettings.level];
-      const currentMode = quizSettings.mode === 'mixed'
-        ? quizModes[Math.floor(Math.random() * 4)].id
-        : quizSettings.mode;
-      setOptions(generateOptions(quizQuestions[nextIndex], vocabulary, currentMode));
+      const nextQuestionMode = getQuestionMode();
+      setCurrentMode(nextQuestionMode);
+      setOptions(generateOptions(quizQuestions[nextIndex], vocabulary, nextQuestionMode));
     } else {
       finishQuiz();
     }
@@ -282,7 +299,7 @@ export default function App() {
     nextQuestion();
   };
 
-  const finishQuiz = () => {
+  const finishQuiz = useCallback(() => {
     const timeTaken = Math.floor((Date.now() - startTime) / 1000);
     const correct = answers.filter(a => a.correct).length;
     const skipped = answers.filter(a => a.userAnswer === 'Skipped').length;
@@ -325,12 +342,24 @@ export default function App() {
     }
     
     setAppState('result');
-  };
+  }, [startTime, answers, quizSettings.level, bestScore]);
+
+  useEffect(() => {
+    if (quizSettings.timeLimit && appState === 'quiz' && timeLeft !== null) {
+      const timer = setInterval(() => {
+        setTimeLeft((prev) => {
+          if (prev === null || prev <= 1) {
+            finishQuiz();
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+      return () => clearInterval(timer);
+    }
+  }, [quizSettings.timeLimit, appState, timeLeft, finishQuiz]);
 
   const currentQuestion = quizQuestions[currentQuestionIndex];
-  const currentMode = quizSettings.mode === 'mixed'
-    ? quizModes[Math.floor(Math.random() * 4)].id
-    : quizSettings.mode;
   const progress = quizQuestions.length > 0 ? ((currentQuestionIndex + (isAnswered ? 1 : 0)) / quizQuestions.length) * 100 : 0;
 
   const formatTime = (seconds: number) => {
