@@ -28,6 +28,7 @@ const quizModes: { id: QuizMode; name: string; description: string; icon: React.
   { id: 'english-to-chinese', name: 'English → Chinese', description: 'See English, choose Chinese character', icon: BookOpen },
   { id: 'pinyin-to-chinese', name: 'Pinyin → Chinese', description: 'See Pinyin, choose Chinese character', icon: Volume2 },
   { id: 'chinese-to-pinyin', name: 'Chinese → Pinyin', description: 'See Chinese, choose correct Pinyin', icon: Target },
+  { id: 'chinese-sound-to-english', name: 'Chinese Sound → English', description: 'Hear Chinese, choose English meaning', icon: Volume2 },
   { id: 'mixed', name: 'Mixed Mode', description: 'Random mix of all quiz types', icon: Sparkles },
 ];
 
@@ -79,6 +80,9 @@ function generateOptions(correctItem: VocabularyItem, allItems: VocabularyItem[]
     case 'chinese-to-pinyin':
       correctAnswer = correctItem.pinyin;
       break;
+    case 'chinese-sound-to-english':
+      correctAnswer = correctItem.english;
+      break;
     default:
       correctAnswer = correctItem.english;
   }
@@ -101,6 +105,9 @@ function generateOptions(correctItem: VocabularyItem, allItems: VocabularyItem[]
       case 'chinese-to-pinyin':
         option = randomItem.pinyin;
         break;
+      case 'chinese-sound-to-english':
+        option = randomItem.english;
+        break;
       default:
         option = randomItem.english;
     }
@@ -122,6 +129,8 @@ function getQuestionText(item: VocabularyItem, mode: QuizMode): string {
       return item.pinyin;
     case 'chinese-to-pinyin':
       return item.chinese;
+    case 'chinese-sound-to-english':
+      return '🎧 Listen and choose the English meaning';
     default:
       return item.chinese;
   }
@@ -137,6 +146,8 @@ function getCorrectAnswer(item: VocabularyItem, mode: QuizMode): string {
       return item.chinese;
     case 'chinese-to-pinyin':
       return item.pinyin;
+    case 'chinese-sound-to-english':
+      return item.english;
     default:
       return item.english;
   }
@@ -158,6 +169,7 @@ export default function App() {
     questionCount: 20,
     timeLimit: null,
     showPinyin: true,
+    soundRate: 0.75,
   });
   
   const [quizQuestions, setQuizQuestions] = useState<VocabularyItem[]>([]);
@@ -227,8 +239,28 @@ export default function App() {
     if (quizSettings.mode !== 'mixed') {
       return quizSettings.mode;
     }
-    return quizModes[Math.floor(Math.random() * 4)].id;
+    const nonMixedModes = quizModes.filter(mode => mode.id !== 'mixed');
+    return nonMixedModes[Math.floor(Math.random() * nonMixedModes.length)].id;
   }, [quizSettings.mode]);
+
+  const speakChinese = useCallback((text: string) => {
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
+      return;
+    }
+
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'zh-CN';
+    utterance.rate = quizSettings.soundRate;
+
+    const voices = window.speechSynthesis.getVoices();
+    const chineseVoice = voices.find((voice) => voice.lang.toLowerCase().startsWith('zh'));
+    if (chineseVoice) {
+      utterance.voice = chineseVoice;
+    }
+
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(utterance);
+  }, [quizSettings.soundRate]);
 
   const startQuiz = () => {
     const vocabulary = vocabularyByLevel[quizSettings.level];
@@ -369,6 +401,13 @@ export default function App() {
 
   const currentQuestion = quizQuestions[currentQuestionIndex];
   const progress = quizQuestions.length > 0 ? ((currentQuestionIndex + (isAnswered ? 1 : 0)) / quizQuestions.length) * 100 : 0;
+
+  useEffect(() => {
+    if (appState !== 'quiz' || !currentQuestion || currentMode !== 'chinese-sound-to-english') {
+      return;
+    }
+    speakChinese(currentQuestion.chinese);
+  }, [appState, currentQuestion, currentMode, speakChinese]);
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -917,6 +956,32 @@ export default function App() {
                         <div className="absolute top-1 left-1 w-6 h-6 bg-white rounded-full shadow-md transform peer-checked:translate-x-6 transition-transform duration-300" />
                       </div>
                     </label>
+
+                    <div className="mt-6 pt-6 border-t border-slate-200">
+                      <div className="flex items-center justify-between mb-3">
+                        <div>
+                          <span className="text-lg font-semibold text-slate-800">Chinese Sound Speed</span>
+                          <p className="text-slate-500">Used in Chinese Sound → English mode</p>
+                        </div>
+                        <Badge variant="outline" className="text-sm px-3 py-1">
+                          {quizSettings.soundRate.toFixed(2)}x
+                        </Badge>
+                      </div>
+
+                      <div className="flex flex-wrap gap-2">
+                        {[0.6, 0.75, 0.9, 1].map((rate) => (
+                          <Button
+                            key={rate}
+                            type="button"
+                            variant={quizSettings.soundRate === rate ? 'default' : 'outline'}
+                            className="h-9"
+                            onClick={() => setQuizSettings({ ...quizSettings, soundRate: rate })}
+                          >
+                            {rate.toFixed(2)}x
+                          </Button>
+                        ))}
+                      </div>
+                    </div>
                   </div>
                 </motion.section>
               </div>
@@ -953,6 +1018,7 @@ export default function App() {
     const correctAnswer = getCorrectAnswer(currentQuestion, currentMode);
     const selectedLevel = hskLevels.find(l => l.level === quizSettings.level);
     const currentModeMeta = quizModes.find(mode => mode.id === currentMode);
+    const isChineseSoundMode = currentMode === 'chinese-sound-to-english';
     
     return (
       <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 py-4">
@@ -1017,16 +1083,31 @@ export default function App() {
                       {currentMode === 'english-to-chinese' && 'Choose the Chinese character'}
                       {currentMode === 'pinyin-to-chinese' && 'Choose the Chinese character'}
                       {currentMode === 'chinese-to-pinyin' && 'What is the Pinyin?'}
+                      {currentMode === 'chinese-sound-to-english' && 'Listen and choose the English meaning'}
                     </p>
                     
                     <h2 className={cn(
                       "font-bold mb-4",
-                      currentMode === 'english-to-chinese' || currentMode === 'pinyin-to-chinese' 
+                      currentMode === 'english-to-chinese' || currentMode === 'pinyin-to-chinese' || currentMode === 'chinese-sound-to-english'
                         ? "text-3xl text-gray-800" 
                         : "text-5xl text-indigo-600"
                     )}>
                       {questionText}
                     </h2>
+
+                    {isChineseSoundMode && (
+                      <div className="mb-4">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => speakChinese(currentQuestion.chinese)}
+                          className="h-11"
+                        >
+                          <Volume2 className="w-4 h-4 mr-2" />
+                          Play Chinese Sound
+                        </Button>
+                      </div>
+                    )}
 
                     <div className="flex flex-wrap justify-center gap-2 mb-2">
                       <Badge variant="secondary" className="text-sm px-3 py-1">
@@ -1065,6 +1146,7 @@ export default function App() {
                   const isSelected = selectedAnswer === option;
                   const optionItem = vocabularyByLevel[quizSettings.level].find((item) => {
                     if (currentMode === 'chinese-to-english') return item.english === option;
+                    if (currentMode === 'chinese-sound-to-english') return item.english === option;
                     if (currentMode === 'english-to-chinese' || currentMode === 'pinyin-to-chinese') return item.chinese === option;
                     if (currentMode === 'chinese-to-pinyin') return item.pinyin === option;
                     return false;
