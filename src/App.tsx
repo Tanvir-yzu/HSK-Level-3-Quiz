@@ -188,6 +188,8 @@ export default function App() {
   const [showHint, setShowHint] = useState(false);
   const voicesRef = useRef<SpeechSynthesisVoice[]>([]);
   const speechUnlockedRef = useRef(false);
+  const fallbackAudioRef = useRef<HTMLAudioElement | null>(null);
+  const skipAutoSpeakOnceRef = useRef(false);
 
   const [initialStats] = useState<StatsSnapshot>(() => {
     const fallback: StatsSnapshot = {
@@ -278,8 +280,35 @@ export default function App() {
     speechUnlockedRef.current = true;
   }, []);
 
+  const playFallbackChineseAudio = useCallback((text: string) => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    const encodedText = encodeURIComponent(text);
+    const audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=zh-CN&q=${encodedText}`;
+
+    if (!fallbackAudioRef.current) {
+      fallbackAudioRef.current = new Audio();
+    }
+
+    const audio = fallbackAudioRef.current;
+    audio.pause();
+    audio.currentTime = 0;
+    audio.src = audioUrl;
+    audio.playbackRate = Math.max(0.5, Math.min(1.2, quizSettings.soundRate));
+    void audio.play().catch(() => {
+      // Ignore if browser blocks autoplay; manual replay button remains available.
+    });
+  }, [quizSettings.soundRate]);
+
   const speakChinese = useCallback((text: string) => {
-    if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    if (!('speechSynthesis' in window)) {
+      playFallbackChineseAudio(text);
       return;
     }
 
@@ -302,9 +331,40 @@ export default function App() {
       utterance.voice = chineseVoice;
     }
 
+    let hasStarted = false;
+    let settled = false;
+    let fallbackTimer: ReturnType<typeof setTimeout> | null = null;
+
+    const cleanup = () => {
+      settled = true;
+      if (fallbackTimer) {
+        clearTimeout(fallbackTimer);
+      }
+    };
+
+    utterance.onstart = () => {
+      hasStarted = true;
+      cleanup();
+    };
+
+    utterance.onend = () => {
+      cleanup();
+    };
+
+    utterance.onerror = () => {
+      cleanup();
+      playFallbackChineseAudio(text);
+    };
+
     synth.cancel();
     synth.speak(utterance);
-  }, [primeSpeechSynthesis, quizSettings.soundRate]);
+
+    fallbackTimer = setTimeout(() => {
+      if (!settled && !hasStarted) {
+        playFallbackChineseAudio(text);
+      }
+    }, 1200);
+  }, [playFallbackChineseAudio, primeSpeechSynthesis, quizSettings.soundRate]);
 
   const startQuiz = () => {
     primeSpeechSynthesis();
@@ -324,6 +384,11 @@ export default function App() {
     const firstQuestionMode = getQuestionMode();
     setCurrentMode(firstQuestionMode);
     setOptions(generateOptions(selected[0], vocabulary, firstQuestionMode));
+
+    if (firstQuestionMode === 'chinese-sound-to-english') {
+      skipAutoSpeakOnceRef.current = true;
+      speakChinese(selected[0].chinese);
+    }
     
     setAppState('quiz');
   };
@@ -452,6 +517,12 @@ export default function App() {
     if (appState !== 'quiz' || !currentQuestion || currentMode !== 'chinese-sound-to-english') {
       return;
     }
+
+    if (skipAutoSpeakOnceRef.current) {
+      skipAutoSpeakOnceRef.current = false;
+      return;
+    }
+
     speakChinese(currentQuestion.chinese);
   }, [appState, currentQuestion, currentMode, speakChinese]);
 
