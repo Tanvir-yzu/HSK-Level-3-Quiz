@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { 
   Play, Trophy, Clock, CheckCircle2, XCircle, 
   HelpCircle, ChevronRight, Volume2, BookOpen, Target, Star,
@@ -186,6 +186,8 @@ export default function App() {
   const [streak, setStreak] = useState(0);
   const [bestStreak, setBestStreak] = useState(0);
   const [showHint, setShowHint] = useState(false);
+  const voicesRef = useRef<SpeechSynthesisVoice[]>([]);
+  const speechUnlockedRef = useRef(false);
 
   const [initialStats] = useState<StatsSnapshot>(() => {
     const fallback: StatsSnapshot = {
@@ -243,26 +245,70 @@ export default function App() {
     return nonMixedModes[Math.floor(Math.random() * nonMixedModes.length)].id;
   }, [quizSettings.mode]);
 
+  useEffect(() => {
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
+      return;
+    }
+
+    const synth = window.speechSynthesis;
+    const loadVoices = () => {
+      voicesRef.current = synth.getVoices();
+    };
+
+    loadVoices();
+    synth.addEventListener('voiceschanged', loadVoices);
+
+    return () => {
+      synth.removeEventListener('voiceschanged', loadVoices);
+    };
+  }, []);
+
+  const primeSpeechSynthesis = useCallback(() => {
+    if (typeof window === 'undefined' || !('speechSynthesis' in window) || speechUnlockedRef.current) {
+      return;
+    }
+
+    const synth = window.speechSynthesis;
+    const unlockUtterance = new SpeechSynthesisUtterance(' ');
+    unlockUtterance.volume = 0;
+    unlockUtterance.rate = 1;
+    unlockUtterance.lang = 'zh-CN';
+
+    synth.speak(unlockUtterance);
+    speechUnlockedRef.current = true;
+  }, []);
+
   const speakChinese = useCallback((text: string) => {
     if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
       return;
+    }
+
+    if (!speechUnlockedRef.current) {
+      primeSpeechSynthesis();
+    }
+
+    const synth = window.speechSynthesis;
+    if (synth.paused) {
+      synth.resume();
     }
 
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = 'zh-CN';
     utterance.rate = quizSettings.soundRate;
 
-    const voices = window.speechSynthesis.getVoices();
+    const voices = voicesRef.current.length > 0 ? voicesRef.current : synth.getVoices();
     const chineseVoice = voices.find((voice) => voice.lang.toLowerCase().startsWith('zh'));
     if (chineseVoice) {
       utterance.voice = chineseVoice;
     }
 
-    window.speechSynthesis.cancel();
-    window.speechSynthesis.speak(utterance);
-  }, [quizSettings.soundRate]);
+    synth.cancel();
+    synth.speak(utterance);
+  }, [primeSpeechSynthesis, quizSettings.soundRate]);
 
   const startQuiz = () => {
+    primeSpeechSynthesis();
+
     const vocabulary = vocabularyByLevel[quizSettings.level];
     const shuffled = shuffleArray(vocabulary);
     const selected = shuffled.slice(0, quizSettings.questionCount);
