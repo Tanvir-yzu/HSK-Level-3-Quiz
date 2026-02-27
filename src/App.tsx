@@ -957,31 +957,33 @@ export default function App() {
                       </div>
                     </label>
 
-                    <div className="mt-6 pt-6 border-t border-slate-200">
-                      <div className="flex items-center justify-between mb-3">
-                        <div>
-                          <span className="text-lg font-semibold text-slate-800">Chinese Sound Speed</span>
-                          <p className="text-slate-500">Used in Chinese Sound → English mode</p>
+                    {quizSettings.mode === 'chinese-sound-to-english' && (
+                      <div className="mt-6 pt-6 border-t border-slate-200">
+                        <div className="flex items-center justify-between mb-3">
+                          <div>
+                            <span className="text-lg font-semibold text-slate-800">Chinese Sound Speed</span>
+                            <p className="text-slate-500">Used in Chinese Sound → English mode</p>
+                          </div>
+                          <Badge variant="outline" className="text-sm px-3 py-1">
+                            {quizSettings.soundRate.toFixed(2)}x
+                          </Badge>
                         </div>
-                        <Badge variant="outline" className="text-sm px-3 py-1">
-                          {quizSettings.soundRate.toFixed(2)}x
-                        </Badge>
-                      </div>
 
-                      <div className="flex flex-wrap gap-2">
-                        {[0.6, 0.75, 0.9, 1].map((rate) => (
-                          <Button
-                            key={rate}
-                            type="button"
-                            variant={quizSettings.soundRate === rate ? 'default' : 'outline'}
-                            className="h-9"
-                            onClick={() => setQuizSettings({ ...quizSettings, soundRate: rate })}
-                          >
-                            {rate.toFixed(2)}x
-                          </Button>
-                        ))}
+                        <div className="flex flex-wrap gap-2">
+                          {[0.6, 0.75, 0.9, 1].map((rate) => (
+                            <Button
+                              key={rate}
+                              type="button"
+                              variant={quizSettings.soundRate === rate ? 'default' : 'outline'}
+                              className="h-9"
+                              onClick={() => setQuizSettings({ ...quizSettings, soundRate: rate })}
+                            >
+                              {rate.toFixed(2)}x
+                            </Button>
+                          ))}
+                        </div>
                       </div>
-                    </div>
+                    )}
                   </div>
                 </motion.section>
               </div>
