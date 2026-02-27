@@ -425,13 +425,13 @@ export default function App() {
             initial={{ opacity: 0, y: -30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: "easeOut" }}
-            className="flex justify-between items-center mb-16"
+            className="flex justify-between items-center mb-10 md:mb-16"
           >
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
                 <GraduationCap className="w-6 h-6 text-white" />
               </div>
-              <span className="text-2xl font-bold text-slate-800">HSK Quiz</span>
+              <span className="text-xl sm:text-2xl font-bold text-slate-800">HSK Quiz</span>
             </div>
             <nav className="hidden md:flex items-center gap-6">
               <Button 
@@ -458,26 +458,26 @@ export default function App() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-            className="text-center mb-20"
+            className="text-center mb-14 md:mb-20"
           >
             <motion.div
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ duration: 0.6, delay: 0.4, type: "spring", stiffness: 100 }}
-              className="inline-block mb-8"
+              className="inline-block mb-6 md:mb-8"
             >
-              <div className="w-24 h-24 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-3xl flex items-center justify-center shadow-2xl shadow-blue-500/25">
-                <GraduationCap className="w-12 h-12 text-white" />
+              <div className="w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-3xl flex items-center justify-center shadow-2xl shadow-blue-500/25">
+                <GraduationCap className="w-10 h-10 sm:w-12 sm:h-12 text-white" />
               </div>
             </motion.div>
             
-            <h1 className="text-6xl md:text-7xl font-bold bg-gradient-to-r from-slate-800 via-slate-700 to-slate-600 bg-clip-text text-transparent mb-6 leading-tight">
+            <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold bg-gradient-to-r from-slate-800 via-slate-700 to-slate-600 bg-clip-text text-transparent mb-4 sm:mb-6 leading-tight">
               Master Chinese
               <br />
               <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Vocabulary</span>
             </h1>
             
-            <p className="text-xl md:text-2xl text-slate-500 max-w-3xl mx-auto mb-10 leading-relaxed">
+            <p className="text-base sm:text-lg md:text-2xl text-slate-500 max-w-3xl mx-auto mb-8 sm:mb-10 leading-relaxed px-1">
               Elevate your HSK exam preparation with our intelligent quiz platform. Practice vocabulary across multiple levels with real-time feedback and progress tracking.
             </p>
 
@@ -486,22 +486,22 @@ export default function App() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.6 }}
-              className="flex flex-wrap justify-center gap-6 md:gap-12 mb-12"
+              className="flex flex-wrap justify-center gap-4 sm:gap-6 md:gap-12 mb-10 sm:mb-12"
             >
               <div className="text-center">
-                <p className="text-3xl font-bold text-slate-800">{totalQuizzes}</p>
+                <p className="text-2xl sm:text-3xl font-bold text-slate-800">{totalQuizzes}</p>
                 <p className="text-slate-500">Quizzes Completed</p>
               </div>
               <div className="text-center">
-                <p className="text-3xl font-bold text-slate-800">{totalQuestions > 0 ? Math.round((totalCorrect / totalQuestions) * 100) : 0}%</p>
+                <p className="text-2xl sm:text-3xl font-bold text-slate-800">{totalQuestions > 0 ? Math.round((totalCorrect / totalQuestions) * 100) : 0}%</p>
                 <p className="text-slate-500">Overall Accuracy</p>
               </div>
               <div className="text-center">
-                <p className="text-3xl font-bold text-slate-800">{bestScore}%</p>
+                <p className="text-2xl sm:text-3xl font-bold text-slate-800">{bestScore}%</p>
                 <p className="text-slate-500">Best Score</p>
               </div>
               <div className="text-center">
-                <p className="text-3xl font-bold text-slate-800">1,200+</p>
+                <p className="text-2xl sm:text-3xl font-bold text-slate-800">1,200+</p>
                 <p className="text-slate-500">Vocabulary Words</p>
               </div>
             </motion.div>
@@ -512,16 +512,16 @@ export default function App() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.8 }}
-            className="mb-20"
+            className="mb-14 md:mb-20"
           >
             <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
               <motion.div whileHover={{ scale: 1.02, y: -5 }} whileTap={{ scale: 0.98 }}>
                 <Button 
                   onClick={() => setAppState('select-level')}
-                  className="w-full h-28 text-xl bg-gradient-to-br from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 shadow-xl hover:shadow-2xl transition-all duration-300 group"
+                  className="w-full h-24 sm:h-28 text-lg sm:text-xl bg-gradient-to-br from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 shadow-xl hover:shadow-2xl transition-all duration-300 group"
                 >
                   <div className="flex items-center justify-center">
-                    <Play className="w-7 h-7 mr-4 group-hover:translate-x-1 transition-transform" />
+                    <Play className="w-6 h-6 sm:w-7 sm:h-7 mr-3 sm:mr-4 group-hover:translate-x-1 transition-transform" />
                     <span className="text-left">
                       <span className="block font-semibold">Start New Quiz</span>
                       <span className="text-sm opacity-90">Choose your level & begin</span>
@@ -534,10 +534,10 @@ export default function App() {
                 <Button 
                   onClick={() => setAppState('stats')}
                   variant="outline"
-                  className="w-full h-28 text-xl border-2 border-slate-300 bg-white/50 hover:bg-white hover:border-slate-400 transition-all duration-300 group"
+                  className="w-full h-24 sm:h-28 text-lg sm:text-xl border-2 border-slate-300 bg-white/50 hover:bg-white hover:border-slate-400 transition-all duration-300 group"
                 >
                   <div className="flex items-center justify-center">
-                    <BarChart3 className="w-7 h-7 mr-4 group-hover:scale-110 transition-transform" />
+                    <BarChart3 className="w-6 h-6 sm:w-7 sm:h-7 mr-3 sm:mr-4 group-hover:scale-110 transition-transform" />
                     <span className="text-left">
                       <span className="block font-semibold">View Progress</span>
                       <span className="text-sm opacity-70">Analyze your performance</span>
@@ -555,7 +555,7 @@ export default function App() {
             transition={{ duration: 0.8, delay: 1.0 }}
           >
             <div className="text-center mb-12">
-              <h2 className="text-4xl font-bold text-slate-800 mb-4">Why Choose HSK Quiz?</h2>
+              <h2 className="text-3xl sm:text-4xl font-bold text-slate-800 mb-4">Why Choose HSK Quiz?</h2>
               <p className="text-lg text-slate-500 max-w-2xl mx-auto">Everything you need to master Chinese vocabulary efficiently</p>
             </div>
 
@@ -589,7 +589,7 @@ export default function App() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: 1.2 + index * 0.1 }}
                   whileHover={{ y: -8, scale: 1.02 }}
-                  className="group relative p-8 bg-white/60 backdrop-blur-sm rounded-3xl border border-white/20 shadow-lg hover:shadow-2xl transition-all duration-300"
+                  className="group relative p-6 sm:p-8 bg-white/60 backdrop-blur-sm rounded-3xl border border-white/20 shadow-lg hover:shadow-2xl transition-all duration-300"
                 >
                   <div className={`absolute -top-6 left-8 w-14 h-14 bg-gradient-to-br ${feature.gradient} rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300`}>
                     <feature.icon className="w-7 h-7 text-white" />
@@ -645,15 +645,15 @@ export default function App() {
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-white rounded-3xl shadow-xl p-8"
+            className="bg-white rounded-3xl shadow-xl p-5 sm:p-8"
           >
-            <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center justify-between gap-3 mb-8">
               <Button variant="ghost" onClick={() => setAppState('home')}>
                 <Home className="w-5 h-5 mr-2" />
                 Back
               </Button>
-              <h2 className="text-2xl font-bold text-gray-800">Select HSK Level</h2>
-              <div className="w-20" />
+              <h2 className="text-lg sm:text-2xl font-bold text-gray-800 text-center">Select HSK Level</h2>
+              <div className="w-10 sm:w-20" />
             </div>
 
             <div className="grid gap-4">
@@ -698,7 +698,7 @@ export default function App() {
             </div>
 
           {/* Level Stats Preview */}
-          <div className="mt-8 grid grid-cols-3 gap-4">
+          <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="p-4 bg-green-50 rounded-xl">
               <p className="text-sm text-green-600 mb-1">Level 1 Progress</p>
               <p className="text-2xl font-bold text-green-700">
@@ -742,7 +742,7 @@ export default function App() {
             className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl shadow-blue-500/10 border border-white/20 overflow-hidden"
           >
             {/* Header */}
-            <div className="bg-gradient-to-r from-blue-500 to-indigo-600 p-8 text-white relative overflow-hidden">
+            <div className="bg-gradient-to-r from-blue-500 to-indigo-600 p-6 sm:p-8 text-white relative overflow-hidden">
               <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16" />
               <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full translate-y-12 -translate-x-12" />
               
@@ -754,19 +754,19 @@ export default function App() {
                 <Button 
                   variant="ghost" 
                   onClick={() => setAppState('select-level')}
-                  className="absolute top-6 left-6 text-white hover:bg-white/20 rounded-full p-3"
+                  className="absolute top-4 left-4 sm:top-6 sm:left-6 text-white hover:bg-white/20 rounded-full p-2.5 sm:p-3"
                 >
                   <ChevronRight className="w-5 h-5 rotate-180" />
                 </Button>
                 
                 <div className="text-center">
-                  <h1 className="text-3xl font-bold mb-2">Quiz Configuration</h1>
+                  <h1 className="text-2xl sm:text-3xl font-bold mb-2">Quiz Configuration</h1>
                   <p className="text-blue-100">Customize your learning experience</p>
                 </div>
                 
                 <div className="text-center mt-6">
                   <Badge className={cn(
-                    "bg-white/20 text-white border-white/30 text-lg px-6 py-2"
+                    "bg-white/20 text-white border-white/30 text-sm sm:text-lg px-4 sm:px-6 py-2"
                   )}>
                     {selectedLevel?.name}
                   </Badge>
@@ -774,7 +774,7 @@ export default function App() {
               </motion.div>
             </div>
 
-            <div className="p-8 md:p-12">
+            <div className="p-5 sm:p-8 md:p-12">
               <div className="space-y-10">
                 {/* Quiz Mode Section */}
                 <motion.section
@@ -782,7 +782,7 @@ export default function App() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: 0.3 }}
                 >
-                  <h2 className="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-3">
+                  <h2 className="text-xl sm:text-2xl font-bold text-slate-800 mb-6 flex items-center gap-3">
                     <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
                       <Brain className="w-5 h-5 text-blue-600" />
                     </div>
@@ -848,7 +848,7 @@ export default function App() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: 0.5 }}
                 >
-                  <h2 className="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-3">
+                  <h2 className="text-xl sm:text-2xl font-bold text-slate-800 mb-6 flex items-center gap-3">
                     <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
                       <Target className="w-5 h-5 text-green-600" />
                     </div>
@@ -891,7 +891,7 @@ export default function App() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: 0.7 }}
                 >
-                  <h2 className="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-3">
+                  <h2 className="text-xl sm:text-2xl font-bold text-slate-800 mb-6 flex items-center gap-3">
                     <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
                       <Clock className="w-5 h-5 text-purple-600" />
                     </div>
@@ -928,20 +928,20 @@ export default function App() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: 0.9 }}
                 >
-                  <h2 className="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-3">
+                  <h2 className="text-xl sm:text-2xl font-bold text-slate-800 mb-6 flex items-center gap-3">
                     <div className="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center">
                       <Volume2 className="w-5 h-5 text-orange-600" />
                     </div>
                     Learning Preferences
                   </h2>
-                  <div className="bg-slate-50 rounded-2xl p-6">
-                    <label className="flex items-center justify-between cursor-pointer group">
-                      <div className="flex items-center gap-4">
+                  <div className="bg-slate-50 rounded-2xl p-4 sm:p-6">
+                    <label className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 cursor-pointer group">
+                      <div className="flex items-center gap-3 sm:gap-4">
                         <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center group-hover:bg-orange-50 transition-colors">
                           <HelpCircle className="w-6 h-6 text-orange-500" />
                         </div>
                         <div>
-                          <span className="text-lg font-semibold text-slate-800">Show Pinyin hints</span>
+                          <span className="text-base sm:text-lg font-semibold text-slate-800">Show Pinyin hints</span>
                           <p className="text-slate-500">Display pronunciation guides for Chinese characters</p>
                         </div>
                       </div>
@@ -997,7 +997,7 @@ export default function App() {
               >
                 <Button 
                   onClick={startQuiz}
-                  className="w-full h-16 text-xl bg-gradient-to-br from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 shadow-2xl shadow-blue-500/25 hover:shadow-blue-500/40 transition-all duration-300 transform hover:scale-[1.02] group"
+                  className="w-full h-14 sm:h-16 text-lg sm:text-xl bg-gradient-to-br from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 shadow-2xl shadow-blue-500/25 hover:shadow-blue-500/40 transition-all duration-300 transform hover:scale-[1.02] group"
                 >
                   <div className="flex items-center justify-center">
                     <Play className="w-6 h-6 mr-3 group-hover:translate-x-1 transition-transform" />
@@ -1031,20 +1031,20 @@ export default function App() {
             animate={{ opacity: 1, y: 0 }}
             className="mb-6"
           >
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-3">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-3">
+              <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                 <Badge className={cn(
                   "text-white bg-gradient-to-r",
                   selectedLevel?.color
                 )}>
                   HSK {quizSettings.level}
                 </Badge>
-                <Badge variant="secondary" className="text-lg px-4 py-2">
+                <Badge variant="secondary" className="text-base sm:text-lg px-3 sm:px-4 py-1.5 sm:py-2">
                   {currentQuestionIndex + 1} / {quizQuestions.length}
                 </Badge>
                 {timeLeft !== null && (
                   <Badge variant="outline" className={cn(
-                    "text-lg px-4 py-2",
+                    "text-base sm:text-lg px-3 sm:px-4 py-1.5 sm:py-2",
                     timeLeft < 60 && "text-red-600 border-red-300 bg-red-50"
                   )}>
                     <Clock className="w-4 h-4 mr-2 inline" />
@@ -1052,13 +1052,13 @@ export default function App() {
                   </Badge>
                 )}
               </div>
-              <div className="flex items-center gap-3">
-                <Badge variant="outline" className="text-lg px-4 py-2">
+              <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                <Badge variant="outline" className="text-base sm:text-lg px-3 sm:px-4 py-1.5 sm:py-2">
                   <Trophy className="w-4 h-4 mr-2 inline text-yellow-500" />
                   {score}
                 </Badge>
                 {streak > 2 && (
-                  <Badge className="bg-orange-500 text-white text-lg px-4 py-2">
+                  <Badge className="bg-orange-500 text-white text-base sm:text-lg px-3 sm:px-4 py-1.5 sm:py-2">
                     <Sparkles className="w-4 h-4 mr-2 inline" />
                     {streak}x
                   </Badge>
@@ -1078,7 +1078,7 @@ export default function App() {
               transition={{ duration: 0.3 }}
             >
               <Card className="bg-white shadow-xl border-0 mb-6">
-                <CardContent className="p-8">
+                <CardContent className="p-5 sm:p-8">
                   <div className="text-center">
                     <p className="text-sm text-gray-500 mb-4 uppercase tracking-wide">
                       {currentMode === 'chinese-to-english' && 'What does this mean?'}
@@ -1091,8 +1091,8 @@ export default function App() {
                     <h2 className={cn(
                       "font-bold mb-4",
                       currentMode === 'english-to-chinese' || currentMode === 'pinyin-to-chinese' || currentMode === 'chinese-sound-to-english'
-                        ? "text-3xl text-gray-800" 
-                        : "text-5xl text-indigo-600"
+                        ? "text-2xl sm:text-3xl text-gray-800" 
+                        : "text-4xl sm:text-5xl text-indigo-600"
                     )}>
                       {questionText}
                     </h2>
@@ -1188,7 +1188,7 @@ export default function App() {
                           </div>
                           <div className="min-w-0">
                             <p className={cn(
-                              "text-lg font-medium leading-relaxed break-words",
+                              "text-base sm:text-lg font-medium leading-relaxed break-words",
                               !isAnswered && "text-gray-800",
                               isAnswered && isCorrect && "text-green-800 font-semibold",
                               isAnswered && isSelected && !isCorrect && "text-red-800 font-semibold",
@@ -1266,7 +1266,7 @@ export default function App() {
               )}
               
               {!isAnswered && (
-                <div className="mt-6 flex gap-3">
+                <div className="mt-6 flex flex-col sm:flex-row gap-3">
                   <Button 
                     variant="outline"
                     onClick={skipQuestion}
@@ -1298,7 +1298,7 @@ export default function App() {
           <motion.div 
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-white rounded-3xl shadow-xl p-8"
+            className="bg-white rounded-3xl shadow-xl p-5 sm:p-8"
           >
             {/* Level Badge */}
             <div className="text-center mb-4">
@@ -1317,16 +1317,16 @@ export default function App() {
                 animate={{ scale: 1 }}
                 transition={{ type: "spring", stiffness: 200, damping: 15 }}
                 className={cn(
-                  "w-32 h-32 rounded-full flex items-center justify-center mx-auto mb-6",
+                  "w-24 h-24 sm:w-32 sm:h-32 rounded-full flex items-center justify-center mx-auto mb-6",
                   isExcellent ? "bg-gradient-to-br from-green-400 to-green-600" :
                   isGood ? "bg-gradient-to-br from-blue-400 to-blue-600" :
                   "bg-gradient-to-br from-orange-400 to-orange-600"
                 )}
               >
-                <span className="text-4xl font-bold text-white">{percentage}%</span>
+                <span className="text-3xl sm:text-4xl font-bold text-white">{percentage}%</span>
               </motion.div>
               
-              <h2 className="text-3xl font-bold text-gray-800 mb-2">
+              <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2">
                 {isExcellent ? 'Excellent! 🎉' : isGood ? 'Great Job! 👍' : 'Keep Practicing! 💪'}
               </h2>
               <p className="text-gray-500">
@@ -1335,7 +1335,7 @@ export default function App() {
             </div>
 
             {/* Stats Grid */}
-            <div className="grid grid-cols-3 gap-4 mb-8">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
               <div className="text-center p-4 bg-green-50 rounded-xl">
                 <CheckCircle2 className="w-6 h-6 text-green-500 mx-auto mb-2" />
                 <p className="text-2xl font-bold text-green-700">{quizResult.correct}</p>
@@ -1371,7 +1371,7 @@ export default function App() {
                 <BookOpen className="w-5 h-5 mr-2" />
                 Review Answers
               </Button>
-              <div className="flex gap-3">
+              <div className="flex flex-col sm:flex-row gap-3">
                 <Button 
                   onClick={() => setAppState('select-level')}
                   variant="outline"
@@ -1419,13 +1419,13 @@ export default function App() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 py-8">
         <div className="container mx-auto px-4 max-w-3xl">
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6">
             <Button variant="ghost" onClick={() => setAppState('result')}>
               <ChevronRight className="w-5 h-5 mr-2 rotate-180" />
               Back to Results
             </Button>
             <div className="text-center">
-              <h2 className="text-2xl font-bold text-gray-800">Review Answers</h2>
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-800">Review Answers</h2>
               <Badge className={cn(
                 "mt-1 text-white bg-gradient-to-r",
                 selectedLevel?.color
@@ -1433,7 +1433,7 @@ export default function App() {
                 {selectedLevel?.name}
               </Badge>
             </div>
-            <div className="w-24" />
+            <div className="hidden sm:block w-24" />
           </div>
 
           <div className="space-y-4">
@@ -1451,7 +1451,7 @@ export default function App() {
                     "border-0 shadow-md",
                     answer.correct ? "bg-green-50" : "bg-red-50"
                   )}>
-                    <CardContent className="p-5">
+                    <CardContent className="p-4 sm:p-5">
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
                           <div className="flex items-center gap-3 mb-2">
@@ -1465,7 +1465,7 @@ export default function App() {
                             )}
                           </div>
                           
-                          <p className="text-lg font-medium text-gray-800 mb-1">
+                          <p className="text-base sm:text-lg font-medium text-gray-800 mb-1 break-words">
                             {getQuestionText(answer.question, mode)} 
                             {(mode === 'chinese-to-english' || mode === 'chinese-to-pinyin') && 
                               <span className="text-gray-400 text-base ml-2">({answer.question.pinyin})</span>
@@ -1500,9 +1500,9 @@ export default function App() {
           </div>
 
           <div className="mt-8 text-center">
-            <Button 
+              <Button 
               onClick={() => setAppState('home')}
-              className="h-14 px-8 text-lg bg-gradient-to-r from-indigo-500 to-purple-600"
+              className="h-12 sm:h-14 px-6 sm:px-8 text-base sm:text-lg bg-gradient-to-r from-indigo-500 to-purple-600"
             >
               <Home className="w-5 h-5 mr-2" />
               Back to Home
@@ -1527,19 +1527,19 @@ export default function App() {
             animate={{ opacity: 1, y: 0 }}
             className="text-center mb-10"
           >
-            <div className="inline-flex items-center gap-3 mb-4">
-              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg">
-                <BarChart3 className="w-8 h-8 text-white" />
+            <div className="inline-flex items-center gap-3 mb-3 sm:mb-4">
+              <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg">
+                <BarChart3 className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
               </div>
             </div>
-            <Button variant="ghost" onClick={() => setAppState('home')} className="absolute top-6 left-6">
+            <Button variant="ghost" onClick={() => setAppState('home')} className="mb-3 sm:mb-0 sm:absolute sm:top-6 sm:left-6">
               <Home className="w-5 h-5 mr-2" />
               Home
             </Button>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent mb-2">
+            <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent mb-2">
               Your Statistics
             </h1>
-            <p className="text-lg text-slate-500">Track your learning journey</p>
+            <p className="text-base sm:text-lg text-slate-500">Track your learning journey</p>
           </motion.div>
 
           <div className="grid gap-8">
@@ -1556,8 +1556,8 @@ export default function App() {
                     Overall Progress
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="p-8">
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <CardContent className="p-5 sm:p-8">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
                     <div className="text-center group">
                       <div className="relative w-20 h-20 mx-auto mb-3">
                         <svg className="w-full h-full" viewBox="0 0 36 36">
@@ -1620,8 +1620,8 @@ export default function App() {
                     Performance Analytics
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="p-8">
-                  <div className="grid md:grid-cols-2 gap-8">
+                <CardContent className="p-5 sm:p-8">
+                  <div className="grid md:grid-cols-2 gap-6 sm:gap-8">
                     <div>
                       <div className="flex justify-between items-center mb-3">
                         <span className="text-slate-600 font-medium">Overall Accuracy</span>
@@ -1687,8 +1687,8 @@ export default function App() {
                     Level Progress
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="p-8">
-                  <div className="grid md:grid-cols-3 gap-6">
+                <CardContent className="p-5 sm:p-8">
+                  <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
                     {[1, 3, 4].map((level) => {
                       const stats = levelStats[level as HSKLevel];
                       const levelAccuracy = stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0;
@@ -1749,10 +1749,10 @@ export default function App() {
                     Vocabulary Mastery
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="p-8">
-                  <div className="grid md:grid-cols-2 gap-8 items-center">
+                <CardContent className="p-5 sm:p-8">
+                  <div className="grid md:grid-cols-2 gap-6 sm:gap-8 items-center">
                     <div className="text-center">
-                      <div className="relative w-40 h-40 mx-auto mb-4">
+                      <div className="relative w-32 h-32 sm:w-40 sm:h-40 mx-auto mb-4">
                         <svg className="w-full h-full" viewBox="0 0 36 36">
                           <path
                             className="text-slate-200"
@@ -1774,7 +1774,7 @@ export default function App() {
                           />
                         </svg>
                         <div className="absolute inset-0 flex flex-col items-center justify-center">
-                          <span className="text-3xl font-bold text-slate-800">1,200</span>
+                          <span className="text-2xl sm:text-3xl font-bold text-slate-800">1,200</span>
                           <span className="text-sm text-slate-500">Words</span>
                         </div>
                       </div>
@@ -1782,7 +1782,7 @@ export default function App() {
                       <p className="text-slate-500">Complete HSK curriculum at your fingertips</p>
                     </div>
                     <div className="space-y-4">
-                      <div className="flex items-center justify-between p-4 bg-blue-50 rounded-xl">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 bg-blue-50 rounded-xl">
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
                             <GraduationCap className="w-5 h-5 text-green-600" />
@@ -1795,7 +1795,7 @@ export default function App() {
                         <Badge className="bg-green-500 text-white">300 words</Badge>
                       </div>
                       
-                      <div className="flex items-center justify-between p-4 bg-purple-50 rounded-xl">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 bg-purple-50 rounded-xl">
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
                             <Brain className="w-5 h-5 text-purple-600" />
@@ -1808,7 +1808,7 @@ export default function App() {
                         <Badge className="bg-purple-500 text-white">300 words</Badge>
                       </div>
                       
-                      <div className="flex items-center justify-between p-4 bg-orange-50 rounded-xl">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 bg-orange-50 rounded-xl">
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
                             <Star className="w-5 h-5 text-orange-600" />
@@ -1835,7 +1835,7 @@ export default function App() {
             >
               <Button 
                 onClick={() => setAppState('select-level')}
-                className="h-16 px-10 text-xl bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                className="h-12 sm:h-16 px-6 sm:px-10 text-base sm:text-xl bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
               >
                 <Play className="w-6 h-6 mr-3" />
                 Continue Learning
