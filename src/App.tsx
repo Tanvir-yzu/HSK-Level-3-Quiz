@@ -29,13 +29,14 @@ const quizModes: { id: QuizMode; name: string; description: string; icon: React.
   { id: 'pinyin-to-chinese', name: 'Pinyin → Chinese', description: 'See Pinyin, choose Chinese character', icon: Volume2 },
   { id: 'chinese-to-pinyin', name: 'Chinese → Pinyin', description: 'See Chinese, choose correct Pinyin', icon: Target },
   { id: 'chinese-sound-to-english', name: 'Chinese Sound → English', description: 'Hear Chinese, choose English meaning', icon: Volume2 },
+  { id: 'wrong-answers', name: 'Wrong Answers Review', description: 'Practice words you got wrong before', icon: XCircle },
   { id: 'mixed', name: 'Mixed Mode', description: 'Random mix of all quiz types', icon: Sparkles },
 ];
 
 const questionCountOptions = [10, 20, 30, 50, 100];
 
 const hskLevels: { level: HSKLevel; name: string; description: string; count: number; color: string }[] = [
-  { level: 1, name: 'HSK Level 1', description: 'Beginner - Essential daily words', count: 300, color: 'from-green-400 to-emerald-600' },
+  { level: 1, name: 'HSK Level 1 and 2', description: 'Beginner - Essential daily words', count: 300, color: 'from-green-400 to-emerald-600' },
   { level: 3, name: 'HSK Level 3', description: 'Intermediate - Expanded vocabulary', count: 300, color: 'from-indigo-400 to-purple-600' },
   { level: 4, name: 'HSK Level 4', description: 'Advanced - Professional vocabulary', count: 600, color: 'from-orange-400 to-red-600' },
 ];
@@ -44,6 +45,12 @@ const defaultLevelStats: Record<HSKLevel, { quizzes: number; correct: number; to
   1: { quizzes: 0, correct: 0, total: 0 },
   3: { quizzes: 0, correct: 0, total: 0 },
   4: { quizzes: 0, correct: 0, total: 0 },
+};
+
+const defaultWrongAnswerPool: Record<HSKLevel, VocabularyItem[]> = {
+  1: [],
+  3: [],
+  4: [],
 };
 
 type StatsSnapshot = {
@@ -61,6 +68,17 @@ function shuffleArray<T>(array: T[]): T[] {
     [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
   }
   return shuffled;
+}
+
+function mergeUniqueVocabularyItems(existingItems: VocabularyItem[], incomingItems: VocabularyItem[]): VocabularyItem[] {
+  const byId = new Map<number, VocabularyItem>();
+  for (const item of existingItems) {
+    byId.set(item.id, item);
+  }
+  for (const item of incomingItems) {
+    byId.set(item.id, item);
+  }
+  return Array.from(byId.values());
 }
 
 function generateOptions(correctItem: VocabularyItem, allItems: VocabularyItem[], mode: QuizMode): string[] {
@@ -81,6 +99,7 @@ function generateOptions(correctItem: VocabularyItem, allItems: VocabularyItem[]
       correctAnswer = correctItem.pinyin;
       break;
     case 'chinese-sound-to-english':
+    case 'wrong-answers':
       correctAnswer = correctItem.english;
       break;
     default:
@@ -106,6 +125,7 @@ function generateOptions(correctItem: VocabularyItem, allItems: VocabularyItem[]
         option = randomItem.pinyin;
         break;
       case 'chinese-sound-to-english':
+      case 'wrong-answers':
         option = randomItem.english;
         break;
       default:
@@ -131,6 +151,8 @@ function getQuestionText(item: VocabularyItem, mode: QuizMode): string {
       return item.chinese;
     case 'chinese-sound-to-english':
       return '🎧 Listen and choose the English meaning';
+    case 'wrong-answers':
+      return item.chinese;
     default:
       return item.chinese;
   }
@@ -147,6 +169,7 @@ function getCorrectAnswer(item: VocabularyItem, mode: QuizMode): string {
     case 'chinese-to-pinyin':
       return item.pinyin;
     case 'chinese-sound-to-english':
+    case 'wrong-answers':
       return item.english;
     default:
       return item.english;
@@ -228,6 +251,27 @@ export default function App() {
   const [totalQuestions, setTotalQuestions] = useState(initialStats.totalQuestions);
   const [bestScore, setBestScore] = useState(initialStats.bestScore);
   const [levelStats, setLevelStats] = useState<Record<HSKLevel, { quizzes: number; correct: number; total: number }>>(initialStats.levelStats);
+  const [wrongAnswerPool, setWrongAnswerPool] = useState<Record<HSKLevel, VocabularyItem[]>>(() => {
+    if (typeof window === 'undefined') {
+      return defaultWrongAnswerPool;
+    }
+
+    try {
+      const savedWrongAnswers = window.localStorage.getItem('hsk-quiz-wrong-answers');
+      if (!savedWrongAnswers) {
+        return defaultWrongAnswerPool;
+      }
+
+      const parsedWrongAnswers = JSON.parse(savedWrongAnswers) as Partial<Record<HSKLevel, VocabularyItem[]>>;
+      return {
+        1: parsedWrongAnswers[1] || [],
+        3: parsedWrongAnswers[3] || [],
+        4: parsedWrongAnswers[4] || [],
+      };
+    } catch {
+      return defaultWrongAnswerPool;
+    }
+  });
 
   useEffect(() => {
     localStorage.setItem('hsk-quiz-stats', JSON.stringify({
@@ -239,13 +283,21 @@ export default function App() {
     }));
   }, [totalQuizzes, totalCorrect, totalQuestions, bestScore, levelStats]);
 
+  useEffect(() => {
+    localStorage.setItem('hsk-quiz-wrong-answers', JSON.stringify(wrongAnswerPool));
+  }, [wrongAnswerPool]);
+
   const getQuestionMode = useCallback((): QuizMode => {
-    if (quizSettings.mode !== 'mixed') {
-      return quizSettings.mode;
+    const resolvedMode = quizSettings.mode === 'wrong-answers' && wrongAnswerPool[quizSettings.level].length === 0
+      ? 'chinese-to-english'
+      : quizSettings.mode;
+
+    if (resolvedMode !== 'mixed') {
+      return resolvedMode;
     }
-    const nonMixedModes = quizModes.filter(mode => mode.id !== 'mixed');
+    const nonMixedModes = quizModes.filter(mode => mode.id !== 'mixed' && mode.id !== 'wrong-answers');
     return nonMixedModes[Math.floor(Math.random() * nonMixedModes.length)].id;
-  }, [quizSettings.mode]);
+  }, [quizSettings.mode, quizSettings.level, wrongAnswerPool]);
 
   useEffect(() => {
     if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
@@ -371,9 +423,21 @@ export default function App() {
   const startQuiz = () => {
     primeSpeechSynthesis();
 
-    const vocabulary = vocabularyByLevel[quizSettings.level];
-    const shuffled = shuffleArray(vocabulary);
-    const selected = shuffled.slice(0, quizSettings.questionCount);
+    const selectedMode = quizSettings.mode === 'wrong-answers' && wrongAnswerPool[quizSettings.level].length === 0
+      ? 'chinese-to-english'
+      : quizSettings.mode;
+
+    const levelVocabulary = vocabularyByLevel[quizSettings.level];
+    const sourceVocabulary = selectedMode === 'wrong-answers'
+      ? wrongAnswerPool[quizSettings.level]
+      : levelVocabulary;
+
+    if (sourceVocabulary.length === 0) {
+      return;
+    }
+
+    const shuffled = shuffleArray(sourceVocabulary);
+    const selected = shuffled.slice(0, Math.min(quizSettings.questionCount, sourceVocabulary.length));
     setQuizQuestions(selected);
     setCurrentQuestionIndex(0);
     setScore(0);
@@ -385,7 +449,7 @@ export default function App() {
     
     const firstQuestionMode = getQuestionMode();
     setCurrentMode(firstQuestionMode);
-    setOptions(generateOptions(selected[0], vocabulary, firstQuestionMode));
+    setOptions(generateOptions(selected[0], levelVocabulary, firstQuestionMode));
 
     if (firstQuestionMode === 'chinese-sound-to-english') {
       skipAutoSpeakOnceRef.current = true;
@@ -480,6 +544,25 @@ export default function App() {
         total: prev[quizSettings.level].total + answers.length,
       }
     }));
+
+    const wrongQuestions = answers.filter(answer => !answer.correct).map(answer => answer.question);
+    const masteredQuestionIds = new Set(
+      quizSettings.mode === 'wrong-answers'
+        ? answers.filter(answer => answer.correct).map(answer => answer.question.id)
+        : []
+    );
+
+    setWrongAnswerPool((prev) => {
+      const currentLevelPool = prev[quizSettings.level];
+      const basePool = quizSettings.mode === 'wrong-answers'
+        ? currentLevelPool.filter(item => !masteredQuestionIds.has(item.id))
+        : currentLevelPool;
+
+      return {
+        ...prev,
+        [quizSettings.level]: mergeUniqueVocabularyItems(basePool, wrongQuestions),
+      };
+    });
     
     const percentage = Math.round((correct / answers.length) * 100);
     if (percentage > bestScore) {
@@ -495,7 +578,7 @@ export default function App() {
     }
     
     setAppState('result');
-  }, [startTime, answers, quizSettings.level, bestScore]);
+  }, [startTime, answers, quizSettings.level, quizSettings.mode, bestScore]);
 
   useEffect(() => {
     if (quizSettings.timeLimit && appState === 'quiz' && timeLeft !== null) {
@@ -850,6 +933,8 @@ export default function App() {
   // Setup Screen
   if (appState === 'setup') {
     const selectedLevel = hskLevels.find(l => l.level === quizSettings.level);
+    const wrongCountForLevel = wrongAnswerPool[quizSettings.level].length;
+    const availableQuizModes = quizModes.filter((mode) => mode.id !== 'wrong-answers' || wrongCountForLevel > 0);
     
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 py-8">
@@ -908,7 +993,7 @@ export default function App() {
                     Quiz Mode
                   </h2>
                   <div className="grid md:grid-cols-2 gap-4">
-                    {quizModes.map((mode, index) => (
+                    {availableQuizModes.map((mode, index) => (
                       <motion.button
                         key={mode.id}
                         initial={{ opacity: 0, y: 20 }}
@@ -954,6 +1039,14 @@ export default function App() {
                             )}>
                               {mode.description}
                             </p>
+                            {mode.id === 'wrong-answers' && (
+                              <p className={cn(
+                                "text-xs mt-2",
+                                quizSettings.mode === mode.id ? "text-blue-700" : "text-slate-500"
+                              )}>
+                                {wrongCountForLevel} saved wrong {wrongCountForLevel === 1 ? 'question' : 'questions'}
+                              </p>
+                            )}
                           </div>
                         </div>
                       </motion.button>
@@ -1205,6 +1298,7 @@ export default function App() {
                       {currentMode === 'pinyin-to-chinese' && 'Choose the Chinese character'}
                       {currentMode === 'chinese-to-pinyin' && 'What is the Pinyin?'}
                       {currentMode === 'chinese-sound-to-english' && 'Listen and choose the English meaning'}
+                      {currentMode === 'wrong-answers' && 'Retry words you answered incorrectly'}
                     </p>
                     
                     <h2 className={cn(
@@ -1268,6 +1362,7 @@ export default function App() {
                   const optionItem = vocabularyByLevel[quizSettings.level].find((item) => {
                     if (currentMode === 'chinese-to-english') return item.english === option;
                     if (currentMode === 'chinese-sound-to-english') return item.english === option;
+                    if (currentMode === 'wrong-answers') return item.english === option;
                     if (currentMode === 'english-to-chinese' || currentMode === 'pinyin-to-chinese') return item.chinese === option;
                     if (currentMode === 'chinese-to-pinyin') return item.pinyin === option;
                     return false;

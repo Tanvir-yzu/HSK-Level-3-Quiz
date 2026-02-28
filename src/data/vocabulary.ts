@@ -1220,7 +1220,7 @@ export const vocabularyByLevel: Record<HSKLevel, VocabularyItem[]> = {
   4: hskLevel4Vocabulary,
 };
 
-export type QuizMode = 'chinese-to-english' | 'english-to-chinese' | 'pinyin-to-chinese' | 'chinese-to-pinyin' | 'chinese-sound-to-english' | 'mixed';
+export type QuizMode = 'chinese-to-english' | 'english-to-chinese' | 'pinyin-to-chinese' | 'chinese-to-pinyin' | 'chinese-sound-to-english' | 'wrong-answers' | 'mixed';
 
 export interface QuizSettings {
   level: HSKLevel;
