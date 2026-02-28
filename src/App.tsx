@@ -1530,27 +1530,54 @@ export default function App() {
             </div>
 
             {/* Score Display */}
-            <div className="text-center mb-8">
-              <motion.div 
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ type: "spring", stiffness: 200, damping: 15 }}
-                className={cn(
-                  "w-24 h-24 sm:w-32 sm:h-32 rounded-full flex items-center justify-center mx-auto mb-6",
-                  isExcellent ? "bg-gradient-to-br from-green-400 to-green-600" :
-                  isGood ? "bg-gradient-to-br from-blue-400 to-blue-600" :
-                  "bg-gradient-to-br from-orange-400 to-orange-600"
-                )}
+            <div className="mb-8">
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
+                className="relative overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-slate-50 p-5 sm:p-7"
               >
-                <span className="text-3xl sm:text-4xl font-bold text-white">{percentage}%</span>
+                <div className="absolute -top-10 -right-10 h-28 w-28 rounded-full bg-blue-100/60 blur-2xl" />
+                <div className="absolute -bottom-12 -left-8 h-28 w-28 rounded-full bg-indigo-100/60 blur-2xl" />
+
+                <div className="relative z-10 flex flex-col items-center text-center">
+                  <motion.div
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ type: "spring", stiffness: 240, damping: 18, delay: 0.1 }}
+                    className={cn(
+                      "mb-5 h-28 w-28 sm:h-36 sm:w-36 rounded-full p-1.5 shadow-lg",
+                      isExcellent ? "bg-gradient-to-br from-green-400 to-green-600" :
+                      isGood ? "bg-gradient-to-br from-blue-400 to-blue-600" :
+                      "bg-gradient-to-br from-orange-400 to-orange-600"
+                    )}
+                  >
+                    <div className="h-full w-full rounded-full bg-white flex flex-col items-center justify-center">
+                      <p className="text-xs font-medium uppercase tracking-wider text-slate-500">Score</p>
+                      <p className="text-3xl sm:text-4xl font-bold text-slate-800">{percentage}%</p>
+                    </div>
+                  </motion.div>
+
+                  <Badge
+                    variant="outline"
+                    className={cn(
+                      "mb-3 px-3 py-1 text-sm",
+                      isExcellent ? "border-green-300 text-green-700 bg-green-50" :
+                      isGood ? "border-blue-300 text-blue-700 bg-blue-50" :
+                      "border-orange-300 text-orange-700 bg-orange-50"
+                    )}
+                  >
+                    {isExcellent ? 'Top Performance' : isGood ? 'Strong Result' : 'Keep Improving'}
+                  </Badge>
+
+                  <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-1">
+                    {isExcellent ? 'Excellent! 🎉' : isGood ? 'Great Job! 👍' : 'Keep Practicing! 💪'}
+                  </h2>
+                  <p className="text-gray-500">
+                    You got {quizResult.correct} out of {quizResult.answers.length} correct
+                  </p>
+                </div>
               </motion.div>
-              
-              <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2">
-                {isExcellent ? 'Excellent! 🎉' : isGood ? 'Great Job! 👍' : 'Keep Practicing! 💪'}
-              </h2>
-              <p className="text-gray-500">
-                You got {quizResult.correct} out of {quizResult.answers.length} correct
-              </p>
             </div>
 
             {/* Stats Grid */}
