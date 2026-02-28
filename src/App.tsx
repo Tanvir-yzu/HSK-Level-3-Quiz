@@ -437,7 +437,9 @@ export default function App() {
     }
 
     const shuffled = shuffleArray(sourceVocabulary);
-    const selected = shuffled.slice(0, Math.min(quizSettings.questionCount, sourceVocabulary.length));
+    const selected = selectedMode === 'wrong-answers'
+      ? shuffled
+      : shuffled.slice(0, Math.min(quizSettings.questionCount, sourceVocabulary.length));
     setQuizQuestions(selected);
     setCurrentQuestionIndex(0);
     setScore(0);
@@ -934,6 +936,7 @@ export default function App() {
   if (appState === 'setup') {
     const selectedLevel = hskLevels.find(l => l.level === quizSettings.level);
     const wrongCountForLevel = wrongAnswerPool[quizSettings.level].length;
+    const isWrongAnswersMode = quizSettings.mode === 'wrong-answers';
     const availableQuizModes = quizModes.filter((mode) => mode.id !== 'wrong-answers' || wrongCountForLevel > 0);
     
     return (
@@ -1055,47 +1058,49 @@ export default function App() {
                 </motion.section>
 
                 {/* Question Count Section */}
-                <motion.section
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.5 }}
-                >
-                  <h2 className="text-xl sm:text-2xl font-bold text-slate-800 mb-6 flex items-center gap-3">
-                    <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
-                      <Target className="w-5 h-5 text-green-600" />
+                {!isWrongAnswersMode && (
+                  <motion.section
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: 0.5 }}
+                  >
+                    <h2 className="text-xl sm:text-2xl font-bold text-slate-800 mb-6 flex items-center gap-3">
+                      <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                        <Target className="w-5 h-5 text-green-600" />
+                      </div>
+                      Number of Questions
+                    </h2>
+                    <div className="grid grid-cols-3 sm:grid-cols-5 gap-3">
+                      {questionCountOptions.map((count, index) => (
+                        <motion.button
+                          key={count}
+                          initial={{ opacity: 0, scale: 0.8 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ duration: 0.3, delay: 0.6 + index * 0.05 }}
+                          onClick={() => setQuizSettings({ ...quizSettings, questionCount: count })}
+                          className={cn(
+                            "relative px-4 py-4 rounded-xl border-2 font-semibold transition-all duration-300",
+                            "focus:outline-none focus:ring-4 focus:ring-blue-500/20",
+                            quizSettings.questionCount === count
+                              ? "border-blue-500 bg-blue-500 text-white shadow-lg shadow-blue-500/25"
+                              : "border-slate-200 bg-white text-slate-700 hover:border-blue-400 hover:bg-blue-50 hover:-translate-y-1"
+                          )}
+                        >
+                          {quizSettings.questionCount === count && (
+                            <motion.div
+                              layoutId="activeCountIndicator"
+                              className="absolute -top-2 -right-2 w-4 h-4 bg-blue-500 rounded-full border-2 border-white"
+                              initial={{ scale: 0 }}
+                              animate={{ scale: 1 }}
+                              transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                            />
+                          )}
+                          <span className="text-lg">{count}</span>
+                        </motion.button>
+                      ))}
                     </div>
-                    Number of Questions
-                  </h2>
-                  <div className="grid grid-cols-3 sm:grid-cols-5 gap-3">
-                    {questionCountOptions.map((count, index) => (
-                      <motion.button
-                        key={count}
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.3, delay: 0.6 + index * 0.05 }}
-                        onClick={() => setQuizSettings({ ...quizSettings, questionCount: count })}
-                        className={cn(
-                          "relative px-4 py-4 rounded-xl border-2 font-semibold transition-all duration-300",
-                          "focus:outline-none focus:ring-4 focus:ring-blue-500/20",
-                          quizSettings.questionCount === count
-                            ? "border-blue-500 bg-blue-500 text-white shadow-lg shadow-blue-500/25"
-                            : "border-slate-200 bg-white text-slate-700 hover:border-blue-400 hover:bg-blue-50 hover:-translate-y-1"
-                        )}
-                      >
-                        {quizSettings.questionCount === count && (
-                          <motion.div
-                            layoutId="activeCountIndicator"
-                            className="absolute -top-2 -right-2 w-4 h-4 bg-blue-500 rounded-full border-2 border-white"
-                            initial={{ scale: 0 }}
-                            animate={{ scale: 1 }}
-                            transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                          />
-                        )}
-                        <span className="text-lg">{count}</span>
-                      </motion.button>
-                    ))}
-                  </div>
-                </motion.section>
+                  </motion.section>
+                )}
 
                 {/* Time Limit Section */}
                 <motion.section
