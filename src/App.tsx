@@ -327,9 +327,11 @@ export default function App() {
 
     const voices = voicesRef.current.length > 0 ? voicesRef.current : synth.getVoices();
     const chineseVoice = voices.find((voice) => voice.lang.toLowerCase().startsWith('zh'));
-    if (chineseVoice) {
-      utterance.voice = chineseVoice;
+    if (!chineseVoice) {
+      playFallbackChineseAudio(text);
+      return;
     }
+    utterance.voice = chineseVoice;
 
     let hasStarted = false;
     let settled = false;
