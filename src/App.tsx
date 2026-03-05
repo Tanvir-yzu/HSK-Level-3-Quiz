@@ -195,6 +195,7 @@ export default function App() {
     showPinyin: true,
     soundRate: 0.75,
   });
+  const [customQuestionCountInput, setCustomQuestionCountInput] = useState(() => String(20));
   
   const [quizQuestions, setQuizQuestions] = useState<VocabularyItem[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -870,11 +871,13 @@ export default function App() {
                   transition={{ delay: index * 0.1 }}
                   onClick={() => {
                     const levelMaxQuestions = vocabularyByLevel[level.level].length;
+                    const clampedQuestionCount = Math.max(1, Math.min(quizSettings.questionCount, levelMaxQuestions));
                     setQuizSettings({
                       ...quizSettings,
                       level: level.level,
-                      questionCount: Math.max(1, Math.min(quizSettings.questionCount, levelMaxQuestions)),
+                      questionCount: clampedQuestionCount,
                     });
+                    setCustomQuestionCountInput(String(clampedQuestionCount));
                     setAppState('setup');
                   }}
                   className="relative overflow-hidden p-6 rounded-2xl border-2 border-gray-200 hover:border-transparent transition-all group"
@@ -1087,6 +1090,7 @@ export default function App() {
                           onClick={() => {
                             const nextCount = Math.min(count, levelMaxQuestions);
                             setQuizSettings({ ...quizSettings, questionCount: nextCount });
+                            setCustomQuestionCountInput(String(nextCount));
                           }}
                           className={cn(
                             "relative px-4 py-4 rounded-xl border-2 font-semibold transition-all duration-300",
@@ -1120,13 +1124,16 @@ export default function App() {
                         min={1}
                         max={levelMaxQuestions}
                         inputMode="numeric"
-                        value={quizSettings.questionCount}
+                        value={customQuestionCountInput}
                         onChange={(event) => {
-                          if (!event.target.value) {
+                          const sanitized = event.target.value.replace(/[^\d]/g, '');
+                          setCustomQuestionCountInput(sanitized);
+
+                          if (!sanitized) {
                             return;
                           }
 
-                          const parsed = Number.parseInt(event.target.value, 10);
+                          const parsed = Number.parseInt(sanitized, 10);
                           if (Number.isNaN(parsed)) {
                             return;
                           }
@@ -1135,10 +1142,14 @@ export default function App() {
                           setQuizSettings({ ...quizSettings, questionCount: clamped });
                         }}
                         onBlur={() => {
-                          const clamped = Math.max(1, Math.min(quizSettings.questionCount, levelMaxQuestions));
+                          const raw = customQuestionCountInput || String(quizSettings.questionCount);
+                          const parsed = Number.parseInt(raw, 10);
+                          const fallback = Number.isNaN(parsed) ? quizSettings.questionCount : parsed;
+                          const clamped = Math.max(1, Math.min(fallback, levelMaxQuestions));
                           if (clamped !== quizSettings.questionCount) {
                             setQuizSettings({ ...quizSettings, questionCount: clamped });
                           }
+                          setCustomQuestionCountInput(String(clamped));
                         }}
                         className="h-11 bg-white"
                       />
