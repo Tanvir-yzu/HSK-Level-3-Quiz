@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
 import { 
   vocabularyByLevel,
   type VocabularyItem, 
@@ -868,7 +869,12 @@ export default function App() {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.1 }}
                   onClick={() => {
-                    setQuizSettings({ ...quizSettings, level: level.level });
+                    const levelMaxQuestions = vocabularyByLevel[level.level].length;
+                    setQuizSettings({
+                      ...quizSettings,
+                      level: level.level,
+                      questionCount: Math.max(1, Math.min(quizSettings.questionCount, levelMaxQuestions)),
+                    });
                     setAppState('setup');
                   }}
                   className="relative overflow-hidden p-6 rounded-2xl border-2 border-gray-200 hover:border-transparent transition-all group"
@@ -937,6 +943,7 @@ export default function App() {
     const selectedLevel = hskLevels.find(l => l.level === quizSettings.level);
     const wrongCountForLevel = wrongAnswerPool[quizSettings.level].length;
     const isWrongAnswersMode = quizSettings.mode === 'wrong-answers';
+    const levelMaxQuestions = vocabularyByLevel[quizSettings.level].length;
     const availableQuizModes = quizModes.filter((mode) => mode.id !== 'wrong-answers' || wrongCountForLevel > 0);
     
     return (
@@ -1077,7 +1084,10 @@ export default function App() {
                           initial={{ opacity: 0, scale: 0.8 }}
                           animate={{ opacity: 1, scale: 1 }}
                           transition={{ duration: 0.3, delay: 0.6 + index * 0.05 }}
-                          onClick={() => setQuizSettings({ ...quizSettings, questionCount: count })}
+                          onClick={() => {
+                            const nextCount = Math.min(count, levelMaxQuestions);
+                            setQuizSettings({ ...quizSettings, questionCount: nextCount });
+                          }}
                           className={cn(
                             "relative px-4 py-4 rounded-xl border-2 font-semibold transition-all duration-300",
                             "focus:outline-none focus:ring-4 focus:ring-blue-500/20",
@@ -1098,6 +1108,43 @@ export default function App() {
                           <span className="text-lg">{count}</span>
                         </motion.button>
                       ))}
+                    </div>
+
+                    <div className="mt-5 rounded-xl border border-slate-200 bg-slate-50/60 p-4">
+                      <label htmlFor="custom-question-count" className="block text-sm font-semibold text-slate-700 mb-2">
+                        Custom number of questions
+                      </label>
+                      <Input
+                        id="custom-question-count"
+                        type="number"
+                        min={1}
+                        max={levelMaxQuestions}
+                        inputMode="numeric"
+                        value={quizSettings.questionCount}
+                        onChange={(event) => {
+                          if (!event.target.value) {
+                            return;
+                          }
+
+                          const parsed = Number.parseInt(event.target.value, 10);
+                          if (Number.isNaN(parsed)) {
+                            return;
+                          }
+
+                          const clamped = Math.max(1, Math.min(parsed, levelMaxQuestions));
+                          setQuizSettings({ ...quizSettings, questionCount: clamped });
+                        }}
+                        onBlur={() => {
+                          const clamped = Math.max(1, Math.min(quizSettings.questionCount, levelMaxQuestions));
+                          if (clamped !== quizSettings.questionCount) {
+                            setQuizSettings({ ...quizSettings, questionCount: clamped });
+                          }
+                        }}
+                        className="h-11 bg-white"
+                      />
+                      <p className="mt-2 text-xs text-slate-500">
+                        Enter any value from 1 to {levelMaxQuestions}.
+                      </p>
                     </div>
                   </motion.section>
                 )}
