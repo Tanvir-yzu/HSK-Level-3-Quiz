@@ -196,6 +196,7 @@ export default function App() {
     soundRate: 0.75,
   });
   const [customQuestionCountInput, setCustomQuestionCountInput] = useState(() => String(20));
+  const [customTimeLimitInput, setCustomTimeLimitInput] = useState('');
   
   const [quizQuestions, setQuizQuestions] = useState<VocabularyItem[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -1179,10 +1180,14 @@ export default function App() {
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.3, delay: 0.8 + index * 0.1 }}
-                        onClick={() => setQuizSettings({ 
-                          ...quizSettings, 
-                          timeLimit: minutes ? minutes * 60 : null 
-                        })}
+                        onClick={() => {
+                          const nextTimeLimit = minutes ? minutes * 60 : null;
+                          setQuizSettings({
+                            ...quizSettings,
+                            timeLimit: nextTimeLimit,
+                          });
+                          setCustomTimeLimitInput(minutes ? String(minutes) : '');
+                        }}
                         className={cn(
                           "px-6 py-3 rounded-xl border-2 font-semibold transition-all duration-300",
                           "focus:outline-none focus:ring-4 focus:ring-purple-500/20",
@@ -1194,6 +1199,59 @@ export default function App() {
                         {minutes ? `${minutes} min` : 'No Limit'}
                       </motion.button>
                     ))}
+                  </div>
+
+                  <div className="mt-5 rounded-xl border border-slate-200 bg-slate-50/60 p-4">
+                    <label htmlFor="custom-time-limit" className="block text-sm font-semibold text-slate-700 mb-2">
+                      Custom time limit (minutes)
+                    </label>
+                    <Input
+                      id="custom-time-limit"
+                      type="number"
+                      min={1}
+                      max={180}
+                      inputMode="numeric"
+                      value={customTimeLimitInput}
+                      onChange={(event) => {
+                        const sanitized = event.target.value.replace(/[^\d]/g, '');
+                        setCustomTimeLimitInput(sanitized);
+
+                        if (!sanitized) {
+                          return;
+                        }
+
+                        const parsed = Number.parseInt(sanitized, 10);
+                        if (Number.isNaN(parsed)) {
+                          return;
+                        }
+
+                        const clampedMinutes = Math.max(1, Math.min(parsed, 180));
+                        setQuizSettings({ ...quizSettings, timeLimit: clampedMinutes * 60 });
+                      }}
+                      onBlur={() => {
+                        if (!customTimeLimitInput) {
+                          setQuizSettings({ ...quizSettings, timeLimit: null });
+                          setCustomTimeLimitInput('');
+                          return;
+                        }
+
+                        const parsed = Number.parseInt(customTimeLimitInput, 10);
+                        if (Number.isNaN(parsed)) {
+                          const fallbackMinutes = quizSettings.timeLimit ? Math.floor(quizSettings.timeLimit / 60) : 0;
+                          setCustomTimeLimitInput(fallbackMinutes > 0 ? String(fallbackMinutes) : '');
+                          return;
+                        }
+
+                        const clampedMinutes = Math.max(1, Math.min(parsed, 180));
+                        setQuizSettings({ ...quizSettings, timeLimit: clampedMinutes * 60 });
+                        setCustomTimeLimitInput(String(clampedMinutes));
+                      }}
+                      placeholder="e.g. 25"
+                      className="h-11 bg-white"
+                    />
+                    <p className="mt-2 text-xs text-slate-500">
+                      Enter 1 to 180 minutes, or leave empty for no limit.
+                    </p>
                   </div>
                 </motion.section>
 
